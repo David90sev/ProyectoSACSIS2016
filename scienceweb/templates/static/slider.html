@@ -1,0 +1,62 @@
+ {% load staticfiles %}
+ 
+ <!-- Slider Starts -->
+<div id="myCarousel" class="carousel slide" data-ride="carousel">
+  <!-- Indicators -->
+  <ol class="carousel-indicators">
+    <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+    <li data-target="#myCarousel" data-slide-to="1"></li>
+    <li data-target="#myCarousel" data-slide-to="2"></li>
+  </ol>
+
+  <!-- Wrapper for slides -->
+  <div class="carousel-inner">
+    <div class="item active">
+      <img src="http://www.peerland.org/sites/all/themes/bluez/images/slideshow/slide-image-1.jpg" alt="Solution that you need">
+      <div class="carousel-caption">
+        <h3>Solution that you need</h3>
+		<p>Lorem ipsum dolor sit amet, consectetur adipiscinf elit</p>
+      </div>
+    </div>
+    <div class="item">
+      <img src="http://www.peerland.org/sites/all/themes/bluez/images/slideshow/slide-image-2.jpg" alt="Solution that you need">
+      <div class="carousel-caption">
+        <h3>Be successful it's easy</h3>
+		<p>Lorem ipsum dolor sit amet, consectetur adipiscinf elit</p>
+      </div>
+    </div>
+    <div class="item">
+      <img src="http://www.peerland.org/sites/all/themes/bluez/images/slideshow/slide-image-3.jpg" alt="Solution that you need">
+      <div class="carousel-caption">
+        <h3>We work for your profit</h3>
+		<p>Lorem ipsum dolor sit amet, consectetur adipiscinf elit</p>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Controls -->
+  <a class="left carousel-control" href="#myCarousel" data-slide="prev">
+    <span class="glyphicon glyphicon-chevron-left"></span>
+  </a>
+  <a class="right carousel-control" href="#myCarousel" data-slide="next">
+    <span class="glyphicon glyphicon-chevron-right"></span>
+  </a>
+</div>
+
+    <!-- Javascript-->
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+    <script>window.jQuery || document.write('<script src="js/jquery-1.7.2.min.js"><\/script>')</script>
+    
+    <!-- Bootstrap jQuery plugins compiled and minified -->
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.1.1/js/bootstrap.min.js"></script>
+    <script>
+      $(document).ready(function(){
+        $('.carousel').carousel({
+          interval: 4000
+        });
+      });
+    </script>
+
+
+
+  <!-- Slider Ends -->

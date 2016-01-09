@@ -1,0 +1,207 @@
+/*-------------------------------------------*/
+/* Navigation                                */
+/*-------------------------------------------*/
+
+#navigation {
+  float: right;
+  margin: 20px auto 0px;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 34px;
+}
+
+#main-menu .act {
+  height: 24px;
+  width: 24px;
+}
+
+#header #main-menu *  { box-sizing: content-box; }
+
+#main-menu .menu ,
+#main-menu .menu * {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+#main-menu .menu {
+  line-height: 1.0;
+}
+
+#main-menu .menu ul {
+  position: absolute;
+  top: -999em;
+}
+
+#main-menu .menu ul li {
+  width: 100%;
+}
+
+#main-menu .menu li a {
+  margin-bottom: 10px;
+  height: 18px;
+}
+
+#main-menu .menu li li a {
+  margin-bottom: 0px;
+}
+
+#main-menu .menu li:hover {
+  visibility: inherit; /* fixes IE7 'sticky bug' */
+}
+
+#main-menu .menu li {
+  float: left;
+  position: relative;
+}
+
+#main-menu .menu a {
+  display: block;
+  position: relative;
+}
+
+#main-menu .menu li:hover ul {
+  left: 0;
+  top: 3em; /* match top ul list item height */
+  z-index: 99;
+}
+
+#main-menu ul.menu li:hover li ul {
+  top: -999em;
+}
+
+#main-menu ul.menu li li:hover ul {
+  left: 10em; /* match ul width */
+  top: 0;
+}
+
+#main-menu ul.menu li li:hover li ul {
+  top: -999em;
+}
+
+#main-menu ul.menu li li li:hover ul {
+  left: 10em; /* match ul width */
+  top: 0;
+}
+
+#main-menu .menu {
+  float: left;
+}
+
+#main-menu .menu a {
+  padding: 1.0em 15px;
+  text-decoration: none;
+  color: #3d4244;
+  text-transform: uppercase;
+}
+
+#main-menu .menu .menu a {
+  color: #3d4244;
+  text-transform: none;
+}
+
+#main-menu .menu a.active {
+  color: #fff;
+}
+
+#main-menu .menu a:focus,
+/* #main-menu .menu a:hover, 
+#main-menu .menu a:active */ {
+  color: #3d4244;
+}
+
+#main-menu .menu a.active {
+  /* color: #fff !important; */
+  background: #01ace4;
+}
+
+
+#main-menu .menu a:hover, 
+#main-menu .menu a:active {
+  color: #ffffff;
+  background: #2D2D2D; 
+}
+
+#main-menu .menu a.active-trail {
+  color: #ffffff;
+}
+
+#main-menu .menu li ul {
+  border-top: 4px solid #01ace4;
+  min-width: 15em;
+  right: -10px;
+}
+
+#main-menu .menu li li {
+  background: #fff;
+  border-bottom: 1px solid #cccccc;
+}
+
+#main-menu .menu li li li {
+  background: #fff;
+}
+
+#main-menu .menu ul a {
+  padding: .75em 1.2em;
+}
+
+#main-menu .menu li.last a {
+  border-right: none;
+}
+
+
+/*-------------------------------------------*/
+/* Reviewer Menu Profile                     */
+/*-------------------------------------------*/
+
+#reviewer-profile-header {
+  float: right;
+  margin: 4px auto 0px;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 34px;
+}
+
+/* #reviewer-profile-header #main-menu .act { */
+#reviewer-profile-header .main-menu {
+  height: 110px;
+  min-width: 200px;
+  max-width: 400px;
+  margin: 0px 0px 0px 5px;
+  -moz-border-radius: 5px 5px 5px 5px; 
+  -webkit-border-radius: 5px 5px 5px 5px; 
+  -ms-border-radius: 5px 5px 5px 5px; 
+  border-radius: 5px 5px 5px 5px; 
+  -khtml-border-radius: 5px 5px 5px 5px; 
+  behavior: url(border-radius.htc);
+  border: 2px solid gray;
+  float: right;
+}
+
+
+#stadistics-menu{
+	  height: auto;
+  min-width: auto;
+  max-width: auto;
+  margin: 0px 0px 0px 0px;
+  float: right;
+}
+
+ 
+#table_form{
+	
+       width: 20%;
+}
+
+
+/*-------------------------------------------*/
+
+#hp-photo, #hp-info { float: left; height: 80px; }
+#hp-photo { margin: 5px; }
+#hp-info { margin: 5px 20px 5px 5px; }
+.hp-square { float: top; height: 25px; margin: 4px 20px; }
+
+#hp-info p { font-size: 12px; font-weight: bold; line-height: 8px; }
+
+
+/*-------------------------------------------*/

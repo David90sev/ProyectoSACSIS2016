@@ -36,6 +36,8 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.humanize',
+    'django.contrib.sites',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -57,8 +59,13 @@ WSGI_APPLICATION = 'scienceweb.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE':'django.db.backends.mysql',
+        'NAME': 'scienceweb',
+        'USER': 'scienceweb',
+        'PASSWORD': 'scienceweb',
+        #'HOST': 'db.local',
+        'HOST': '',
+        'PORT': '3306',
     }
 }
 
@@ -80,3 +87,30 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.6/howto/static-files/
 
 STATIC_URL = '/static/'
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, "static"),
+)
+
+MEDIA_URL = 'http://localhost:8888/media/'
+ADMIN_MEDIA_PREFIX = '/media/admin/'
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+
+# Templates
+
+TEMPLATE_DIRS = (
+    os.path.join(BASE_DIR, 'templates'),
+)
+
+
+ACCOUNT_ACTIVATION_DAYS=7
+
+EMAIL_HOST = 'smtp.gmail.com'
+#cambiar con nombre del dominio
+EMAIL_HOST_USER = 'science.developers@gmail.com'
+EMAIL_HOST_PASSWORD = 'QgO1mljMFpuvXltUozwJ'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+DEFAULT_FROM_EMAIL = 'Science <noreply@science.org>'
+
+
+SITE_ID=1

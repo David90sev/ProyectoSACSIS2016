@@ -1,0 +1,122 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+
+
+
+
+<html lang="en">
+	<head>
+		<title>{% block title %}{% endblock %}</title>
+		<link rel="stylesheet" type="text/css" media="all" href="{% static "css/style.css" %}" />
+		<link rel="stylesheet" type="text/css" media="all" href="{% static "css/header.css" %}" />
+
+		<link rel="stylesheet" media="screen" href="{% static "css/bootstrap.min.css" %}">
+		<link rel="stylesheet" media="screen" href="{% static "css/bootstrap-theme.min.css" %}">
+		
+		<meta name="robots"   content="NONE,NOARCHIVE" />
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+
+        {% block style-form %}{% endblock %}
+
+		<script src="{% static "js/jquery.min.js" %}"></script>        
+        <script src="{% static "js/bootstrap.min.js" %}"></script>
+
+        {% block javascript-form %}{% endblock %}
+	</head>
+
+<body>
+
+
+	
+	<div id="header" class="clearfix">
+      {% include "header.html" %}
+      {% block header-navigation %}{% endblock %}
+      {% block header-profile %}{% endblock %}
+    </div>
+  
+
+
+  
+  
+  
+  
+  <!--Footer context Start -->
+  <div id="footer-context">
+  
+    <!--Footer Start -->
+    <div id="footer-bottom">
+    
+      <!-- <?php print render($page['footer']) ?> -->
+        <div id="copyright">
+          Copyright &reg; 2016, SACSIS 
+          <span class="developed">Designed & Develop by DMS
+            <a href="" target="_blank">
+            </a>
+          </span>
+
+        </div>
+
+    </div>
+    <!--Footer Ends -->
+
+  </div>
+  <!--Footer context Ends -->
+
+  <div class="clear"></div>
+
+
+	<div id="barritaloca"
+		style="display: none; position: fixed; left: 0px; right: 0px; bottom: 0px; width: 100%; min-height: 40px; background: #333333; color: #dddddd; z-index: 99999;">
+		<div
+			style="width: 100%; position: absolute; padding-left: 5px; font-family: verdana; font-size: 12px; top: 30%;">
+			We use own and third party cookies to improve navigation. If you continue to browse consider to accept the use of cookies.
+			<a href="javascript:void(0);"
+				style="padding: 4px; background: #4682B4; text-decoration: none; color: #fff;"
+				onclick="PonerCookie();"><b>OK</b></a> <a href="terms.html"
+				target="_blank"
+				style="padding-left: 5px; text-decoration: none; color: #ffffff;">
+				More information</a>
+		</div>
+	</div>
+	<script>
+		function getCookie(c_name) {
+			var c_value = document.cookie;
+			var c_start = c_value.indexOf(" " + c_name + "=");
+			if (c_start == -1) {
+				c_start = c_value.indexOf(c_name + "=");
+			}
+			if (c_start == -1) {
+				c_value = null;
+			} else {
+				c_start = c_value.indexOf("=", c_start) + 1;
+				var c_end = c_value.indexOf(";", c_start);
+				if (c_end == -1) {
+					c_end = c_value.length;
+				}
+				c_value = unescape(c_value.substring(c_start, c_end));
+			}
+			return c_value;
+		}
+		function setCookie(c_name, value, exdays) {
+			var exdate = new Date();
+			exdate.setDate(exdate.getDate() + exdays);
+			var c_value = escape(value)
+					+ ((exdays == null) ? "" : "; expires="
+							+ exdate.toUTCString());
+			document.cookie = c_name + "=" + c_value;
+		}
+		if (getCookie('aviso') != "1") {
+			document.getElementById("barritaloca").style.display = "block";
+		}
+		function PonerCookie() {
+			setCookie('aviso', '1', 365);
+			document.getElementById("barritaloca").style.display = "none";
+		}
+	</script>
+
+
+
+</div>
+
+</body>
+</html>
