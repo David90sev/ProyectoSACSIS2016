@@ -10,6 +10,7 @@ https://docs.djangoproject.com/en/1.6/ref/settings/
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
+from django.conf.global_settings import LOGIN_REDIRECT_URL, LOGOUT_URL
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
 
@@ -38,6 +39,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django.contrib.humanize',
     'django.contrib.sites',
+    'users',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -68,6 +70,20 @@ DATABASES = {
         'PORT': '3306',
     }
 }
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': 'mydatabase',
+#     }
+# }
+
+
+#LOGIN
+from django.core.urlresolvers import reverse_lazy
+LOGIN_URL=reverse_lazy('login')
+LOGIN_REDIRECT_URL=reverse_lazy('login')
+LOGOUT_URL=reverse_lazy('logout')
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.6/topics/i18n/
