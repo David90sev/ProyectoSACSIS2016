@@ -1,16 +1,19 @@
 from django.shortcuts import render, render_to_response
 from django.views.generic.base import TemplateView
 from users.models import YoungInvestigator, PrincipalInvestigator,\
-    Investigation_Group
+    Investigation_Group, Invitation
 from django.contrib.auth.decorators import login_required
 from django.template.context import RequestContext
 from users.forms import YoungInvestigatorForm, PrincipalInvestigatorForm,\
-    UserForm
+    UserForm, InvestigationGroupForm
 from django.template.loader import render_to_string
 from django.core.mail.message import EmailMultiAlternatives, EmailMessage
 from django.template.defaultfilters import striptags
 from django.contrib.auth.models import User
 import random
+from django.http.response import HttpResponseRedirect
+from django.db.models import Q
+from datetime import datetime, timedelta
 
 # Create your views here.
 @login_required
@@ -25,6 +28,20 @@ def view_profile(request):
         is_principal=True
     print request.user
     return render_to_response('users/profile.html',
+                              {'users':users,'is_young':is_young,'is_principal':is_principal},
+                              context_instance = RequestContext(request))
+    
+def view_profile_withId(request, userId):
+    try:
+        users = YoungInvestigator.objects.get(user_id__exact=userId)
+        is_young=True
+        is_principal=False
+    except:
+        users = PrincipalInvestigator.objects.get(user_id__exact=userId)
+        is_young=False
+        is_principal=True
+    print request.user
+    return render_to_response('users/profile_id.html',
                               {'users':users,'is_young':is_young,'is_principal':is_principal},
                               context_instance = RequestContext(request))
 
@@ -240,11 +257,123 @@ def activate(request, token):
     
 @login_required
 def list_investigation_groups(request):
-    userId = request.user.id
-    manager = PrincipalInvestigator.objects.filter(user_id=userId)
-    groups_list = Investigation_Group.objects.filter(manager_id=manager.id)
+    principal = PrincipalInvestigator.objects.filter(user_id=request.user.id)
+    if len(principal)==1:
+        man=principal[0]
+        groups_list_as_manager = Investigation_Group.objects.filter(manager_id=man.id)
+    else:
+        groups_list_as_manager=[]
+    invitations=Invitation.objects.filter(participant_id=request.user.id,is_accept=True)
+    groups_list=[]
+    if len(invitations)!=0:
+        for invitation in invitations:
+            groups_list += Investigation_Group.objects.filter(_id=invitation.group.id)
+
+        
     has_groups = (len(groups_list)>0)
+    has_manage_groups = (len(groups_list_as_manager)>0)
     
-    return render_to_response('groups/listMYgroupss.html',
-                              {'groups_list':groups_list,'has_groups':has_groups},
+    return render_to_response('groups/list.html',
+                              {'groups_list_as_manager':groups_list_as_manager,
+                               'groups_list':groups_list,
+                               'has_groups':has_groups,'has_manage_groups':has_manage_groups},
                               context_instance = RequestContext(request))
+    
+def group_create(request):
+    if request.method=='POST':
+        formulario = InvestigationGroupForm(request.POST,request.FILES)
+        if formulario.is_valid():
+              
+                
+            ##Creacion del grupo
+            userId = request.user.id
+            manager1 = PrincipalInvestigator.objects.filter(user_id=userId)[0]
+
+            Investigation_Group.objects.create(
+                              manager=manager1,
+                              title=formulario.cleaned_data['title'],
+                              description=formulario.cleaned_data['description'],
+                              research_field=formulario.cleaned_data['research_field'],
+                              research_speciality=formulario.cleaned_data['research_speciality'],
+                              )                
+
+            return HttpResponseRedirect('list')
+            
+    else:
+        formulario = InvestigationGroupForm()
+    
+    return render_to_response('groups/create.html',
+                              {'formulario':formulario},
+                              context_instance = RequestContext(request))
+    
+def group_view(request, groupId):
+    group=Investigation_Group.objects.filter(id=groupId)[0]
+    manager1=PrincipalInvestigator.objects.filter(id=group.manager.id)[0]
+    user_manager=User.objects.filter(id=manager1.user.id)[0]
+    invitations=Invitation.objects.filter(group_id=group.id,is_accept=1)
+    users=[]
+    for inv in invitations:
+        users+=User.objects.filter(id=inv.participant.id)
+    
+    
+    return render_to_response('groups/view.html',
+                              {'group':group,'manager':manager1,'user_manager':user_manager,'users':users},
+                              context_instance = RequestContext(request))    
+
+def add_participant(request, groupId):
+    group=Investigation_Group.objects.filter(id=groupId)
+    return render_to_response('groups/view.html',
+                              {'group':group},
+                              context_instance = RequestContext(request))   
+def compara( x, y ) :
+
+    # x e y son objetos de los que se desea ordenar
+    
+    if x.h_index < y.h_index :
+        rst = 1
+    elif x.h_index > y.h_index :
+        rst = -1
+    else :
+        rst = 0
+
+    return rst
+
+def search_user(request):
+    query = request.GET.get('q', '')
+    a=datetime.now() - timedelta(seconds=(365.25*24*60*60))
+    if query:
+        qset = (
+            Q(username__icontains=query) |
+            Q(first_name__icontains=query) |
+            Q(last_name__icontains=query)|
+            Q(last_login__gt=a)
+        )
+        results = User.objects.filter(qset).distinct()
+        investigadores=[]
+        for r in results:
+            try:
+                investigadores += YoungInvestigator.objects.filter(user_id=r.id)
+            except:
+                None
+            try:
+                investigadores += PrincipalInvestigator.objects.filter(user_id=r.id)
+            except:
+                None
+        investigadores.sort(compara)
+    else:
+        results = User.objects.filter(is_staff=0)
+        investigadores=[]
+        for r in results:
+            try:
+                investigadores += YoungInvestigator.objects.filter(user_id=r.id)
+            except:
+                None
+            try:
+                investigadores += PrincipalInvestigator.objects.filter(user_id=r.id)
+            except:
+                None
+        investigadores.sort(compara)
+    return render_to_response("users/list.html", {
+        "results": investigadores,
+        "query": query
+    },context_instance = RequestContext(request))

@@ -191,7 +191,7 @@ class Investigation_Group(models.Model):
                     ("Technology","Technology"),)
     manager=models.ForeignKey(PrincipalInvestigator, on_delete=models.CASCADE)
     title=models.CharField(max_length=140)
-    descripton=models.TextField(max_length=1500)
+    description=models.TextField(max_length=1500)
     research_field=models.CharField(max_length=50,choices=RESEARCH_FIELD_CHOOSES,default="All")
     research_speciality=models.CharField(max_length=100)
 

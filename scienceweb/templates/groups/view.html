@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+
+{% block title %}
+	Mis Grupos
+{% endblock %}
+
+
+{% block page-title %}
+	Mis Grupos
+{% endblock %}
+
+
+{% block content %}
+	
+
+	
+		
+		<div class="container-fluid">
+			<div class="row">
+				<div class="col-md-5">
+					<h3>Participants</h3>
+					<ul>
+					<li>
+						<span><em>Manager</em></span> &nbsp;{{user_manager.first_name|capfirst}}&nbsp;{{user_manager.last_name|capfirst}}
+					</li>
+		        	{% for user in users %}
+						<li>{{user.first_name|capfirst}}&nbsp;{{user.last_name|capfirst}}</li>
+					{% endfor %}
+					
+					</ul>
+				</div>
+				<div class="col-md-5">
+				    <h3>Group Datas</h3>
+				    {{group.title}}
+				    {{group.description}}
+				    {{group.research_field}}
+				    {{group.research_speciality}}
+				</div>
+		    </div>
+		</div>
+			
+			
+
+	<br><br>
+		<input class="btn btn-primary" type="button" value="Add participant" onclick="window.location.replace('{% url "group_add_participant" group.id%}')"/>
+		
+		<input class="btn btn-primary" type="button" value="Back" onclick="window.location.replace('{% url "group_list" %}')"/>
+	
+
+	
+	
+{% endblock %}
+
+

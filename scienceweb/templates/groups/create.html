@@ -12,14 +12,9 @@ Register
 {% block content %}
 <div>
 	<div>
-		<form action={{urlRequest}} method="post" enctype="multipart/form-data">{% csrf_token %}
+		<form action="/groups/create" method="post" enctype="multipart/form-data">{% csrf_token %}
 	
-			<p><h3>User</h3></p>
-    		<table>
-    			{{ userForm.as_table }}
-    		</table>
-    		
-    		<p><h3>Personal Data</h3></p>
+    		<p><h3>Group Data</h3></p>
     		<table>
     			{{ formulario.as_table }}	
 			</table>

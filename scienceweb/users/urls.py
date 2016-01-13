@@ -6,15 +6,21 @@ import django_messages.views
 
 
 urlpatterns = patterns('',
-                       url(r'^profile', views.view_profile),
+                       url(r'^profile$', views.view_profile),
+                       url(r'^profile/(?P<userId>.*)$', views.view_profile_withId, name="user_profile_withId"),
+                       url(r'^search', views.search_user),
                        url(r'^register$', views.registration_choose),
                        url(r'^register_yi', views.registration_young_inv),
                        url(r'^register_pi', views.registration_principal_inv),
                        url(r'^register/activate/(?P<token>.*)$', views.activate, name="activate" ),
 )
 
-
-
+urlpatterns += patterns('',
+    url(r'^list',views.list_investigation_groups, name='group_list'),
+    url(r'^show/(?P<groupId>\d*)$',views.group_view, name='group_show'),
+    url(r'^create$',views.group_create, name="group_create"),
+    url(r'^addparticipant/(?P<groupId>\d*)$',views.add_participant, name="group_add_participant")
+                        )
 
 
 urlpatterns += patterns('',

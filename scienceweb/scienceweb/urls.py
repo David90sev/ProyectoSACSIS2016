@@ -18,5 +18,8 @@ urlpatterns = patterns('',
     url(r'^accounts/logout', 'django.contrib.auth.views.logout',{'next_page':'../home'}, name='logout'),
     #url(r'^accounts/resetpassword', views.sendPassword),
     url(r'^users/', include('users.urls')),
+    url(r'^groups/', include('users.urls')),
+
+
 
 )+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

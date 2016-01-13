@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+
+{% block title %}
+	Mis Grupos
+{% endblock %}
+
+
+{% block page-title %}
+	Mis Grupos
+{% endblock %}
+
+
+{% block content %}
+	As Manager
+	{% if has_manage_groups %}
+		<div class="container-fluid">
+		    <ul>
+		        {% for group in groups_list_as_manager %}
+		            <li> <a href="{% url "group_show" group.id %}">{{ group.title }}</a></li>
+		        {% endfor %}
+		    </ul>
+		</div>
+	{% else %}
+			<div>You are the manager any group.</div>
+	{% endif %}<br>
+	Participating
+	{% if has_groups %}
+		
+		<div class="container-fluid">
+		    <ul>
+		        {% for group1 in groups_list %}
+		            <li> <a href="{% url "group_show" group1.id %}">{{ group1.title }}</a></li>
+		        {% endfor %}
+		    </ul>
+		</div>
+			
+	{% else %}
+	
+		<div>You have any group.</div>
+	
+	{% endif %}
+	<br><br>
+	Solo para premiums
+			<input class="btn btn-primary" type="button" value="Add new group" onclick="window.location.replace('{% url "group_create" %}')"/>
+		
+		
+		<input class="btn btn-primary" type="button" value="Back" onclick="window.location.replace('{% url "home" %}')"/>
+	
+
+	
+	
+{% endblock %}
+
+

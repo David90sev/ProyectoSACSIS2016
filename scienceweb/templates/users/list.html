@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+
+{% block title %}
+	Mis Grupos
+{% endblock %}
+
+
+{% block page-title %}
+	Mis Grupos
+{% endblock %}
+
+
+{% block content %}
+<form action="./search/" method="GET">
+    <label for="q">Buscar: </label>
+    <input type="text" name="q" value="{{ query|escape }}">
+    <input type="submit" value="Buscar">
+ </form>
+ 
+ {% if query %}
+    <h2>Resultados para "{{ query|escape }}":</h2>
+ 
+ {% else %}
+ 	<h2>Todos los resultados :</h2>
+ {% endif %}
+    {% if results %}
+      <ul>
+      {% for aux in results %}
+        <li>{{aux.user.first_name|capfirst}}&nbsp;{{aux.user.last_name|capfirst}}&nbsp;&nbsp;
+        <a href="{% url "user_profile_withId" aux.user.id %}">Ver perfil</a></l1>
+      {% endfor %}
+      </ul>
+    {% else %}
+      <p>No coincide ning&uacote;n usuario</p>
+    {% endif %}
+  
+
+	
+	
+{% endblock %}
+
+

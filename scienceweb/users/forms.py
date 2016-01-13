@@ -1,5 +1,5 @@
 from django import forms
-from models import PrincipalInvestigator,YoungInvestigator
+from models import PrincipalInvestigator,YoungInvestigator,Investigation_Group
 from django.contrib.auth.models import User
 
 TITLES_AVALIAVLE=(("Graduate","Graduate"),
@@ -144,11 +144,12 @@ class PrincipalInvestigatorForm(forms.ModelForm):
 
 class InvestigationGroupForm(forms.ModelForm):
     class Meta:
-        model = PrincipalInvestigator
+        model = Investigation_Group
         #fields = []
         exclude= ('manager',)
+        widgets = {}
         title=forms.TextInput(attrs={'required': True})
         description=forms.Textarea(attrs={'required': True})
-        research_field = forms.ChoiceField(widget=forms.Select(),attrs={'required': True})
+        research_field = forms.ChoiceField(widget=forms.Select())
         research_speciality = forms.TextInput(attrs={'required': True}),                                        
         fields =['title','description','research_field','research_speciality']
