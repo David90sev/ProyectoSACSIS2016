@@ -324,7 +324,9 @@ def add_participant(request, groupId):
     group=Investigation_Group.objects.filter(id=groupId)
     return render_to_response('groups/view.html',
                               {'group':group},
-                              context_instance = RequestContext(request))   
+                              context_instance = RequestContext(request))  
+    
+##Para ordenar por h_index listas 
 def compara( x, y ) :
 
     # x e y son objetos de los que se desea ordenar
