@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+
+{% block title %}
+Profile
+{% endblock %}
+
+{% block content %}
+
+	{% if is_young %}
+	<div class="container-fluid">
+	<div class="row">
+	
+	<div class='col-md-8'>
+		{{user.first_name}}<br>
+		{{user.last_name}}<br>
+		{{user.photo}}<br>
+		{{ users.telephone }}<br>
+		{{ users.title}}<br>
+		{{ users.specialty}}<br>
+		<a href='{{users.curriculum.url}}'>Acceder a su curriculum</a><br>
+		{{users.research_field}}<br>
+		{{users.research_specialty}}<br>
+		{{users.h_index}}<br>
+		{{users.country}}<br>
+		{{users.city}}<br>
+		{{users.principal_text}}<br>
+		{{users.other_text}}<br>
+	</div>
+	<div class=" col-md-3">
+	<img src='{{ users.photo.url }}' class="img-circle" height="200e" width="200e"/><br>
+	</div>
+	</div>		
+	</div>
+	
+	{% endif %}
+	{% if is_principal %}
+		<div class="container-fluid">
+	<div class="row">
+	
+	<div class='col-md-8'>
+		{{user.first_name}}<br>
+		{{user.last_name}}<br>
+		{{user.photo}}<br>
+		{{ users.telephone }}<br>
+		{{users.research_field}}<br>
+		{{users.research_specialty}}<br>
+		{{users.h_index}}<br>
+		{{users.country}}<br>
+		{{users.city}}<br>
+		{{users.principal_text}}<br>
+		{{users.other_text}}<br>
+		{{users.offers_text}}<br>
+		
+	</div>
+	<div class=" col-md-3">
+	<img src='{{ users.photo.url }}' class="img-circle" height="200e" width="200e"/><br>
+	</div>
+	</div>		
+	</div>
+	{% endif %}
+
+
+
+
+
+{% endblock %}
+
+
+

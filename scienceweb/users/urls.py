@@ -6,16 +6,11 @@ import django_messages.views
 
 
 urlpatterns = patterns('',
-#     url(r'^$', views.HomePageView.as_view(), name='editor_home' ),
-#     url(r'^login$', 
-#         auth_views.login,
-#         {'template_name': 'registration/login_reviewer.html'},
-#         name='editor_login'
-#     ),
-#     url(r'^logout$', RedirectView.as_view(url='/accounts/logout', permanent=False), name='editor_logout' ),
-#     url(r'^edit$', views.edit, name='editor_edit' ),
-#     url(r'^register$', views.enviarPeticion, name="editor_register" ),
-#     url(r'^activate/(?P<token>.*)/$', views.activar, name="editor_activate" ),
+                       url(r'^profile', views.view_profile),
+                       url(r'^register$', views.registration_choose),
+                       url(r'^register_yi', views.registration_young_inv),
+                       url(r'^register_pi', views.registration_principal_inv),
+                       url(r'^register/activate/(?P<token>.*)$', views.activate, name="activate" ),
 )
 
 

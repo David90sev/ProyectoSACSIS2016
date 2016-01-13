@@ -2,6 +2,50 @@ from django import forms
 from models import PrincipalInvestigator,YoungInvestigator
 from django.contrib.auth.models import User
 
+TITLES_AVALIAVLE=(("Graduate","Graduate"),
+                  ("Doctor","Doctor"),)
+
+RESEARCH_FIELD_CHOOSES=(("All","All"),
+                          ("Agricultural sciences","Agricultural sciences"),
+                          ("Anthropology","Anthropology"),
+                          ("Architecture","Architecture"),
+                          ("Arts","Arts"),
+                          ("Astronomy","Astronomy"),
+                          ("Biological sciences","Biological sciences"),
+                          ("Chemistry","Chemistry"),
+                          ("Communication sciences","Communication sciences"),
+                          ("Computer science","Computer science"),
+                          ("Criminology","Criminology"),
+                          ("Cultural studies","Cultural studies"),
+                          ("Demography","Demography"),
+                          ("Economics","Economics"),
+                          ("Educational sciences","Educational sciences"),
+                          ("Engineering","Engineering"),
+                          ("Environmental science","Environmental science"),
+                          ("Ethics in health sciences","Ethics in health sciences"),
+                          ("Ethics in natural sciences","Ethics in natural sciences"),
+                          ("Ethics in physical sciences","Ethics in physical sciences"),
+                          ("Ethics in social sciences","Ethics in social sciences"),
+                          ("Geography","Geography"),
+                          ("Geosciences","Geosciences"),
+                          ("History","History"),
+                          ("Information science","Information science"),
+                          ("Juridical sciences","Juridical sciences"),
+                          ("Language sciences","Language sciences"),
+                          ("Literature","Literature"),
+                          ("Mathematics","Mathematics"),
+                          ("Mecical sciences","Mecical sciences"),
+                          ("Neurosciences","Neurosciences"),
+                          ("Other","Other"),
+                          ("Pharmacological sciences","Pharmacological sciences"),
+                          ("Philosophy","Philosophy"),
+                          ("Physics","Physics"),
+                          ("Political sciences","Political sciences"),
+                          ("Psychological sciences","Psychological sciences"),
+                          ("Religious Sciences","Religious Sciences"),
+                          ("Sociology","Sociology"),
+                          ("Technology","Technology"),)
+
 class UserForm(forms.ModelForm):
     
     class Meta:
@@ -34,23 +78,77 @@ class YoungInvestigatorForm(forms.ModelForm):
     class Meta:
         model = YoungInvestigator
         #fields = []
-        exclude= ('user','photo')
+        exclude= ('user','photo','curriculum','token')
         widgets = {
-            'telephone': forms.TextInput(attrs={'required': True}),   
-            'title' : forms.ChoiceField(attrs={'required': True}),
-            'specialty' : forms.TextInput(attrs={'required': True}),
-            'curriculum' : forms.FileField(),
-            'photo' : forms.FileField(),
-            'research_field' : forms.ChoiceField(attrs={'required': True}),
-            'research_speciality' : forms.TextInput(attrs={'required': True}),
-            'h_index' : forms.DecimalField(),
-            'country' : forms.TextInput(attrs={'required': True}),
-            'city' : forms.TextInput(attrs={'required': True}),
-            'facebook_link' : forms.URLField(),
-            'twitter_link' : forms.URLField(),
-            'linkedIn_link' : forms.URLField(),
-            'principal_text' : forms.Textarea(),
-            'other_text' : forms.Textarea(),
+#             'telephone': forms.TextInput(attrs={'required': True}),   
+#             'title' : forms.ChoiceField(widget=forms.Select(),choices=TITLES_AVALIAVLE),
+#             'specialty' : forms.TextInput(attrs={'required': True}),
+# #             'curriculum' : forms.FileField(),
+# #             'photo' : forms.FileField(),
+#             'research_field' : forms.ChoiceField(widget=forms.Select(),choices=RESEARCH_FIELD_CHOOSES,),
+#             'research_speciality' : forms.TextInput(attrs={'required': True}),
+#             'h_index' : forms.DecimalField(),
+#             'country' : forms.TextInput(attrs={'required': True}),
+#             'city' : forms.TextInput(attrs={'required': True}),
+#             'facebook_link' : forms.URLField(),
+#             'twitter_link' : forms.URLField(),
+#             'linkedIn_link' : forms.URLField(),
+#             'principal_text' : forms.Textarea(),
+#             'other_text' : forms.Textarea(),
         }
+        telephone = forms.TextInput(attrs={'required': True}),   
+        title = forms.ChoiceField(widget=forms.Select(),choices=TITLES_AVALIAVLE),
+        specialty = forms.TextInput(attrs={'required': True}),
+        research_field = forms.ChoiceField(widget=forms.Select(),choices=RESEARCH_FIELD_CHOOSES,),
+        research_speciality = forms.TextInput(attrs={'required': True}),
+        h_index = forms.DecimalField(),
+        country = forms.TextInput(attrs={'required': True}),
+        city = forms.TextInput(attrs={'required': True}),
+        facebook_link = forms.URLField(),
+        twitter_link = forms.URLField(),
+        linkedIn_link = forms.URLField(),
+        principal_text = forms.Textarea(),
+        other_text = forms.Textarea(),
+        fields=['telephone','title','specialty','research_field','research_speciality','h_index','country','city',
+                'facebook_link','twitter_link','linkedIn_link','principal_text','other_text',]
         
-        
+
+class PrincipalInvestigatorForm(forms.ModelForm):
+
+    class Meta:
+        model = PrincipalInvestigator
+        #fields = []
+        exclude= ('user','photo','curriculum','token')
+        widgets = {
+#             'curriculum' : forms.FileField(),
+#             'photo' : forms.FileField(),
+#             'research_field' : forms.ChoiceField(widget=forms.Select(),choices=RESEARCH_FIELD_CHOOSES),
+        }
+        telephone = forms.TextInput(attrs={'required': True}),   
+        research_field = forms.ChoiceField(widget=forms.Select())
+        research_speciality = forms.TextInput(attrs={'required': True}),
+        h_index = forms.DecimalField(),
+        country = forms.TextInput(attrs={'required': True}),
+        city = forms.TextInput(attrs={'required': True}),
+        facebook_link = forms.URLField(),
+        twitter_link = forms.URLField(),
+        linkedIn_link = forms.URLField(),
+        principal_text = forms.Textarea(),
+        other_text = forms.Textarea(),
+        number_of_authorisating = forms.IntegerField(),
+        offers_text = forms.Textarea(),
+        interested_in_premium = forms.BooleanField(),
+        fields = ['telephone','research_field','research_speciality','h_index','country','city','facebook_link',
+                  'twitter_link','linkedIn_link','principal_text','other_text','number_of_authorisating',
+                  'offers_text','interested_in_premium']
+
+class InvestigationGroupForm(forms.ModelForm):
+    class Meta:
+        model = PrincipalInvestigator
+        #fields = []
+        exclude= ('manager',)
+        title=forms.TextInput(attrs={'required': True})
+        description=forms.Textarea(attrs={'required': True})
+        research_field = forms.ChoiceField(widget=forms.Select(),attrs={'required': True})
+        research_speciality = forms.TextInput(attrs={'required': True}),                                        
+        fields =['title','description','research_field','research_speciality']

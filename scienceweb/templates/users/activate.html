@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block title %}Account activated{% endblock %}
+
+{% block content %}
+  <h1>Account activated.</h1>
+  {% load humanize %}
+  {% if account %}
+    <p>Thanks for signing up! Now you can log in.</p>
+  {% else %}
+    <p>Sorry, it didn't work. Either your activation link was incorrect, or
+    the activation key for your account has expired;
+    registration.</p>
+  {% endif %}
+{% endblock %}

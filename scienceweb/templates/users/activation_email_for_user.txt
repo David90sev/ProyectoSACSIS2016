@@ -1,0 +1,24 @@
+{% load humanize %}
+
+<h3>Editor's details</h3>
+<table>
+<tr><th>First Name:</th>  <td>{{first_name}}</td></tr>
+<tr><th>Last Name</th>  <td>{{last_name}}</td></tr>
+<tr><th>Username</th>  <td>{{username}}</td></tr>
+<tr><th>E-mail</th>  <td>{{email}}</td></tr>
+<tr><th>Telephone</th>  <td>{{telephone}}</td></tr>
+</table>
+
+<br>
+
+<h3>Journal's details</h3>
+<table>
+<tr><th>Journal Name:</th>  <td>{{journalName}}</td></tr>
+<tr><th>ISSN</th>  <td>{{ISSN}}</td></tr>
+</table>
+
+<br>
+<strong>To activate this Editor, please click on the following link:</strong><br>
+
+<a href="http://localhost/users/register/activate/{{ activation_key }}">Click here to activate your account</a>
+

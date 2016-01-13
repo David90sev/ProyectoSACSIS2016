@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+
+{% block title %}
+Register
+{% endblock %}
+
+{% block header-profile %}
+{% endblock %}
+
+{% block content %}
+<div>
+	<div>
+		<form action={{urlRequest}} method="post" enctype="multipart/form-data">{% csrf_token %}
+	
+			<p><h3>User</h3></p>
+    		<table>
+    			{{ userForm.as_table }}
+    		</table>
+    		
+    		<p><h3>Personal Data</h3></p>
+    		<table>
+    			{{ formulario.as_table }}	
+			</table>
+			<br>
+			<div class="actions">
+				<input type="submit" value="Save">
+				<input type="button" value="Back" onclick="window.location.replace('{% url "home" %}')">
+			</div>
+		</form>
+	</div>
+</div>
+{% endblock %}
+
+{% block page-title %} 
+{% endblock %}
+

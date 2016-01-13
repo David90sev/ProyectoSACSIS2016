@@ -40,6 +40,7 @@ INSTALLED_APPS = (
     'django.contrib.humanize',
     'django.contrib.sites',
     'users',
+    'django_messages',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -107,7 +108,7 @@ STATICFILES_DIRS = (
     os.path.join(BASE_DIR, "static"),
 )
 
-MEDIA_URL = 'http://localhost:8888/media/'
+MEDIA_URL = '/media/'
 ADMIN_MEDIA_PREFIX = '/media/admin/'
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
@@ -120,13 +121,15 @@ TEMPLATE_DIRS = (
 
 ACCOUNT_ACTIVATION_DAYS=7
 
-EMAIL_HOST = 'smtp.gmail.com'
 #cambiar con nombre del dominio
-EMAIL_HOST_USER = 'science.developers@gmail.com'
-EMAIL_HOST_PASSWORD = 'QgO1mljMFpuvXltUozwJ'
+
+EMAIL_HOST = 'smtp-mail.outlook.com'
+EMAIL_HOST_USER = 'david_la_clase@hotmail.com'
+EMAIL_HOST_PASSWORD = 'qwerty123456'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-DEFAULT_FROM_EMAIL = 'Science <noreply@science.org>'
+DEFAULT_FROM_EMAIL = 'Peerland <noreply@peerland.org>'
+
 
 
 SITE_ID=1
