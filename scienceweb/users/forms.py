@@ -80,28 +80,14 @@ class YoungInvestigatorForm(forms.ModelForm):
         #fields = []
         exclude= ('user','photo','curriculum','token')
         widgets = {
-#             'telephone': forms.TextInput(attrs={'required': True}),   
-#             'title' : forms.ChoiceField(widget=forms.Select(),choices=TITLES_AVALIAVLE),
-#             'specialty' : forms.TextInput(attrs={'required': True}),
-# #             'curriculum' : forms.FileField(),
-# #             'photo' : forms.FileField(),
-#             'research_field' : forms.ChoiceField(widget=forms.Select(),choices=RESEARCH_FIELD_CHOOSES,),
-#             'research_speciality' : forms.TextInput(attrs={'required': True}),
-#             'h_index' : forms.DecimalField(),
-#             'country' : forms.TextInput(attrs={'required': True}),
-#             'city' : forms.TextInput(attrs={'required': True}),
-#             'facebook_link' : forms.URLField(),
-#             'twitter_link' : forms.URLField(),
-#             'linkedIn_link' : forms.URLField(),
-#             'principal_text' : forms.Textarea(),
-#             'other_text' : forms.Textarea(),
+
         }
         telephone = forms.TextInput(attrs={'required': True}),   
         title = forms.ChoiceField(widget=forms.Select(),choices=TITLES_AVALIAVLE),
         specialty = forms.TextInput(attrs={'required': True}),
         research_field = forms.ChoiceField(widget=forms.Select(),choices=RESEARCH_FIELD_CHOOSES,),
         research_speciality = forms.TextInput(attrs={'required': True}),
-        h_index = forms.DecimalField(),
+        h_index = forms.IntegerField(),
         country = forms.TextInput(attrs={'required': True}),
         city = forms.TextInput(attrs={'required': True}),
         facebook_link = forms.URLField(),
@@ -127,7 +113,7 @@ class PrincipalInvestigatorForm(forms.ModelForm):
         telephone = forms.TextInput(attrs={'required': True}),   
         research_field = forms.ChoiceField(widget=forms.Select())
         research_speciality = forms.TextInput(attrs={'required': True}),
-        h_index = forms.DecimalField(),
+        h_index = forms.IntegerField(),
         country = forms.TextInput(attrs={'required': True}),
         city = forms.TextInput(attrs={'required': True}),
         facebook_link = forms.URLField(),
@@ -136,11 +122,10 @@ class PrincipalInvestigatorForm(forms.ModelForm):
         principal_text = forms.Textarea(),
         other_text = forms.Textarea(),
         number_of_authorisating = forms.IntegerField(),
-        offers_text = forms.Textarea(),
         interested_in_premium = forms.BooleanField(),
         fields = ['telephone','research_field','research_speciality','h_index','country','city','facebook_link',
-                  'twitter_link','linkedIn_link','principal_text','other_text','number_of_authorisating',
-                  'offers_text','interested_in_premium']
+                  'twitter_link','linkedIn_link','principal_text','other_text','number_of_authorisating'
+                  ,'interested_in_premium']
 
 class InvestigationGroupForm(forms.ModelForm):
     class Meta:
