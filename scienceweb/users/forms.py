@@ -1,6 +1,6 @@
 from django import forms
-from models import PrincipalInvestigator,YoungInvestigator,Investigation_Group
 from django.contrib.auth.models import User
+from models import *
 
 TITLES_AVALIAVLE=(("Graduate","Graduate"),
                   ("Doctor","Doctor"),)
@@ -138,3 +138,16 @@ class InvestigationGroupForm(forms.ModelForm):
         research_field = forms.ChoiceField(widget=forms.Select())
         research_speciality = forms.TextInput(attrs={'required': True}),                                        
         fields =['title','description','research_field','research_speciality']
+        
+class OfferForm(forms.ModelForm):
+    
+    class Meta:
+        model = Offer
+        #fields = []
+        exclude= ('principal','publication_date',)
+        widgets = {}
+        title=forms.TextInput(attrs={'required': True})
+        description=forms.Textarea(attrs={'required': True})
+        deadline=forms.DateField()
+#         keywords = forms.TextInput(attrs={'required': True})
+        fields =['title','description','deadline']

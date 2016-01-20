@@ -1,9 +1,9 @@
 from django.contrib.auth.models import User
 from django.db import models
 from django.core.validators import RegexValidator
-from django.db.models.fields import CharField
 
 # Create your models here.
+   
 class YoungInvestigator(models.Model):
 
     user = models.OneToOneField(User, unique=True, related_name='young_investigator')
@@ -73,6 +73,7 @@ class YoungInvestigator(models.Model):
     class Meta:
         verbose_name = 'young_investigator'
         verbose_name_plural = 'young_investigators'
+        ordering = ('h_index',)
     
     def __unicode__(self):
         return u"Young_investigator information for %s" % self.user.username
@@ -142,6 +143,7 @@ class PrincipalInvestigator(models.Model):
     class Meta:
         verbose_name = 'principal_investigator'
         verbose_name_plural = 'principal_investigators'
+        ordering = ('h_index',)
     
     def __unicode__(self):
         return u"Principal_investigator information for %s" % self.user.username
@@ -203,7 +205,7 @@ class Investigation_Group(models.Model):
     
 class Invitation(models.Model):
     group=models.ForeignKey(Investigation_Group, on_delete=models.CASCADE)
-    participant=models.ForeignKey(User)
+    participant=models.ForeignKey(PrincipalInvestigator)
     is_accept=models.BooleanField(default=False)
     
     class Meta:
@@ -213,3 +215,38 @@ class Invitation(models.Model):
     def __unicode__(self):
         return u"Invitation information for %s" % self.is_accept
 
+
+class Offer(models.Model):
+    #titulo, description, deadline, publication date
+    title=models.CharField(max_length=140)
+    description=models.CharField(max_length=3000)
+    deadline=models.DateField()
+    publication_date=models.DateField()
+    principal=models.ForeignKey(PrincipalInvestigator, on_delete=models.CASCADE)
+
+    
+    class Meta:
+        verbose_name = 'offer'
+        verbose_name_plural = 'offers'
+    
+    def __unicode__(self):
+        return u"Offer information for %s" % self.title
+    
+
+class Keyword(models.Model):
+    word=models.CharField(max_length=50)
+    young=models.ManyToManyField(YoungInvestigator, related_name="keywords", null=True , blank=True)
+    principal=models.ManyToManyField(PrincipalInvestigator,related_name="keywords", null=True, blank=True)
+    offer=models.ManyToManyField(Offer, related_name="keywords" , null=True, blank=True)
+    
+    class Meta:
+        verbose_name = 'keyword'
+        verbose_name_plural = 'keywords'
+        ordering = ('word',)
+
+    
+    def __unicode__(self):
+        return u"keyword information for %s" % self.word
+     
+    
+    

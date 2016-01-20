@@ -1,11 +1,11 @@
 from django.shortcuts import render, render_to_response
 from django.views.generic.base import TemplateView
-from users.models import YoungInvestigator, PrincipalInvestigator,\
-    Investigation_Group, Invitation
+from users.models import YoungInvestigator, PrincipalInvestigator,Keyword,\
+    Investigation_Group, Invitation, Offer, Keyword
 from django.contrib.auth.decorators import login_required
 from django.template.context import RequestContext
 from users.forms import YoungInvestigatorForm, PrincipalInvestigatorForm,\
-    UserForm, InvestigationGroupForm
+    UserForm, InvestigationGroupForm, OfferForm
 from django.template.loader import render_to_string
 from django.core.mail.message import EmailMultiAlternatives, EmailMessage
 from django.template.defaultfilters import striptags
@@ -261,17 +261,15 @@ def list_investigation_groups(request):
     if len(principal)==1:
         man=principal[0]
         groups_list_as_manager = Investigation_Group.objects.filter(manager_id=man.id)
-    else:
-        groups_list_as_manager=[]
-    invitations=Invitation.objects.filter(participant_id=request.user.id,is_accept=True)
-    groups_list=[]
-    if len(invitations)!=0:
-        for invitation in invitations:
-            groups_list += Investigation_Group.objects.filter(_id=invitation.group.id)
-
-        
-    has_groups = (len(groups_list)>0)
-    has_manage_groups = (len(groups_list_as_manager)>0)
+        invitations=Invitation.objects.filter(participant_id=man.id,is_accept=True)
+        groups_list=[]
+        if len(invitations)!=0:
+            for invitation in invitations:
+                groups_list += Investigation_Group.objects.filter(_id=invitation.group.id)
+    
+            
+        has_groups = (len(groups_list)>0)
+        has_manage_groups = (len(groups_list_as_manager)>0)
     
     return render_to_response('groups/list.html',
                               {'groups_list_as_manager':groups_list_as_manager,
@@ -320,11 +318,122 @@ def group_view(request, groupId):
                               {'group':group,'manager':manager1,'user_manager':user_manager,'users':users},
                               context_instance = RequestContext(request))    
 
-def add_participant(request, groupId):
+
+
+def add_participant(request, groupId, participantId):
     group=Investigation_Group.objects.filter(id=groupId)
+    participant=PrincipalInvestigator.objects.filter(id=participantId)
+    Invitation.objects.create(group=group,participant=participant)
+    
     return render_to_response('groups/view.html',
                               {'group':group},
                               context_instance = RequestContext(request))  
+    
+    
+def add_offer(request):
+    principal = PrincipalInvestigator.objects.filter(user_id=request.user.id)
+    if len(principal!=0):
+        prin=principal[0]
+    
+    if request.method=='POST':
+        formulario = OfferForm(request.POST)
+        if formulario.is_valid():
+              
+            ##Creacion de la oferta
+#                title=models.CharField(max_length=140)
+#                 description=models.CharField(max_length=3000)
+#                 deadline=models.DateField()
+#                 publication_date=models.DateField()
+#                 keywords=models.ManyToManyField(Keyword)
+#                 principal=models.ForeignKey(PrincipalInvestigator, on_delete=models.CASCADE)
+
+            offer_inst=Offer.objects.create(
+                              principal=prin,
+                              title=formulario.cleaned_data['title'],
+                              description=formulario.cleaned_data['description'],
+                              deadline=formulario.cleaned_data['deadline'],
+                              publication_date=datetime.now(),
+                              )
+            
+            #Keywords
+            keywords=formulario.cleaned_data['keywords']
+            if keywords!=None: 
+            #la separamos por comas y eliminamos la ultima tupla si estaa vacia
+                key_vector=keywords.split(",")
+                if (key_vector[len(key_vector)-1].strip()==''):
+                    key_vector.pop()
+                
+                if len(key_vector)!=0:
+                    #linkeamos todas las keys con su oferta y le hacemos strip para quitarle espacios en blanco a izq y der
+                    for keyword in keywords:
+                        key = keyword.strip()
+                        if key!='' or key!=None:
+                            Keyword.objects.create(word=key.capitalize(),offer=offer_inst)
+                    #capitalize() strip(' '), .split(", ")
+            
+            ###por aqui
+            return HttpResponseRedirect('list')
+            
+    else:
+        formulario = OfferForm()
+    
+    return render_to_response('offer/create.html',
+                              {'formulario':formulario},
+                              context_instance = RequestContext(request))
+        
+    
+    
+def remove_offer(request,offerId):
+    principal = PrincipalInvestigator.objects.filter(user_id=request.user.id)
+    if len(principal!=0):
+        prin=principal[0]
+        Offer.objects.filter(id=offerId,principal=prin).delete()
+    
+    return HttpResponseRedirect('list')
+
+def list_my_offers(request):
+    principal = PrincipalInvestigator.objects.filter(user_id=request.user.id)
+    offers=[]
+    if len(principal!=0):
+        prin=principal[0]
+        offers=Offer.objects.filter(principal=prin)
+        
+    return render_to_response('offer/list.html',
+                              {'offers':offers},
+                              context_instance = RequestContext(request))
+
+def list_offers_by_keywords(request):    
+    young_v = YoungInvestigator.objects.filter(user_id=request.user.id)
+    offers=[]
+    if len(young_v)!=0:
+        young=young_v[0]
+        keys_young=Keyword.objects.filter(young=young)
+        s=""
+        for key in keys_young:
+            s+=" OR `users_keyword`.word='"+key.word+"'"
+        s=s[3:]
+        query="SELECT DISTINCT `users_offer`.`id`, `users_offer`.`title`,`users_offer`.`description`,"
+        query+=" `users_offer`.`deadline`, `users_offer`.`publication_date`, `users_offer`.`principal_id` FROM"
+        query+=" `users_keyword_offer` , `users_keyword`, `users_offer` WHERE  `users_keyword`.id=`users_keyword_offer`.keyword_id "
+        query+="AND `users_keyword_offer`.offer_id=`users_offer`.id AND ("+s+")"
+
+        offers=Offer.objects.raw(query)
+#       Offer.objects.raw('SELECT * FROM myapp_person WHERE last_name = %s', [lname])
+
+# para una sola keyword Offer.objects.filter(Q(keywords__word=key.word))
+        return render_to_response('offer/list.html',
+                                    {'offers':offers},
+                                    context_instance = RequestContext(request))    
+    return HttpResponseRedirect('')
+
+
+def list_offers_by_one_keyword(request, keyword):    
+    key=Keyword.objects.filter(word=keyword)[0]
+    offers=Offer.objects.filter(Q(keywords__word=key.word))
+    return render_to_response('offer/list.html',
+                                    {'offers':offers,'keyword':keyword},
+                                    context_instance = RequestContext(request))    
+
     
 ##Para ordenar por h_index listas 
 def compara( x, y ) :
