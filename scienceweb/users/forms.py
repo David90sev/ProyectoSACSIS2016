@@ -151,3 +151,10 @@ class OfferForm(forms.ModelForm):
         deadline=forms.DateField()
 #         keywords = forms.TextInput(attrs={'required': True})
         fields =['title','description','deadline']
+
+class KeywordsForm(forms.ModelForm):
+    
+    class Meta:
+        model=Keyword
+        exclude=('young','principal','offer')
+        widgets = {'word':forms.TextInput(attrs={'required': True}),}

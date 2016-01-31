@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+
+{% block title %}
+New offer
+{% endblock %}
+
+{% block header-profile %}
+{% endblock %}
+
+{% block content %}
+<div>
+	<div>
+		<form action="/users/offers/add" method="post" enctype="multipart/form-data">{% csrf_token %}
+	
+			<p><h3>Offer</h3></p>
+    		<table>
+    			{{ formulario.as_table }}	
+			</table>
+			<p><h3>Keywords</h3></p>
+    		<table>
+    			{{ keywords.as_table }}	
+			</table>
+			<br>
+			<div class="actions">
+				<input type="submit" value="Save">
+				<input type="button" value="Back" onclick="window.location.replace('{% url "self_profile" %}')">
+			</div>
+		</form>
+	</div>
+</div>
+{% endblock %}
+
+{% block page-title %} 
+{% endblock %}
+

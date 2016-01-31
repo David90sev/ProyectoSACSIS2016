@@ -60,9 +60,44 @@ Profile
 	</div>		
 	</div>
 	{% endif %}
+{% endblock %}
 
-
-
+{% block adds %}
+<div>
+		<div>
+						<form >
+						<fieldset><legend>Keywords</legend>
+				        {% for word in keywords %}
+				        	<div class=' btn btn-warning btn-xs'>
+				        		{{word.word}}
+				        		{% if is_young %}
+				        		<a href="/users/keyremove/young/{{users.id}}/{{word.word}}"/>
+				        		<span class="glyphicon glyphicon-remove-sign" aria-hidden="true"/>
+				        		</a>
+				        		{% else %}
+				        		<a href="/users/keyremove/principal/{{users.id}}/{{word.word}}"/>
+				        		<span class="glyphicon glyphicon-remove-sign" aria-hidden="true"/>
+				        		</a>
+				        		{% endif %}
+				        	</div>
+				        
+				        {% endfor %}
+				        </fieldset>
+				        </form>
+		</div>		
+		<br>
+		<div>
+		<form action="/users/profile" method="post" enctype="multipart/form-data">{% csrf_token %}
+		
+			{{keywords_form.as_table}}
+			
+			<div class="actions">
+				<input type="submit" value="Add keywords">
+			</div>
+		</form>
+		</div>
+</div>
+	
 
 
 {% endblock %}

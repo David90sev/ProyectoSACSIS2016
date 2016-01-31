@@ -6,7 +6,8 @@ import django_messages.views
 
 
 urlpatterns = patterns('',
-                       url(r'^profile$', views.view_profile),
+                       url(r'^dashboard',views.dashboard, name="dashboard"),
+                       url(r'^profile$', views.view_profile, name="self_profile"),
                        url(r'^profile/(?P<userId>.*)$', views.view_profile_withId, name="user_profile_withId"),
                        url(r'^search', views.search_user),
                        url(r'^register$', views.registration_choose),
@@ -19,7 +20,12 @@ urlpatterns += patterns('',
     url(r'^list',views.list_investigation_groups, name='group_list'),
     url(r'^show/(?P<groupId>\d*)$',views.group_view, name='group_show'),
     url(r'^create$',views.group_create, name="group_create"),
-    url(r'^addparticipant/(?P<groupId>\d*)$',views.add_participant, name="group_add_participant")
+    url(r'^addparticipant/(?P<groupId>\d*)$',views.add_participant, name="group_add_participant"),
+    url(r'^keyremove/young/(?P<users_id>\d*)/(?P<word_word>.*)', views.remove_keyword_from_profile, {'is_young':'1',},name="keyremove"),
+    url(r'^keyremove/principal/(?P<users_id>\d*)/(?P<word_word>.*)', views.remove_keyword_from_profile, {'is_young':'0',},name="keyremove"),
+    url(r'offers/add',views.add_offer),
+    url(r'offers/list',views.list_my_offers),
+    url(r'^offers/view/(?P<offer_id>.*)',views.view_offer, name="view_offer"),
                         )
 
 

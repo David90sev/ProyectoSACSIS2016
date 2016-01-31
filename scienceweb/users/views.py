@@ -5,7 +5,7 @@ from users.models import YoungInvestigator, PrincipalInvestigator,Keyword,\
 from django.contrib.auth.decorators import login_required
 from django.template.context import RequestContext
 from users.forms import YoungInvestigatorForm, PrincipalInvestigatorForm,\
-    UserForm, InvestigationGroupForm, OfferForm
+    UserForm, InvestigationGroupForm, OfferForm, KeywordsForm
 from django.template.loader import render_to_string
 from django.core.mail.message import EmailMultiAlternatives, EmailMessage
 from django.template.defaultfilters import striptags
@@ -14,6 +14,7 @@ import random
 from django.http.response import HttpResponseRedirect
 from django.db.models import Q
 from datetime import datetime, timedelta
+from random import randint
 
 # Create your views here.
 @login_required
@@ -22,15 +23,45 @@ def view_profile(request):
         users = YoungInvestigator.objects.get(user_id__exact=request.user.id)
         is_young=True
         is_principal=False
+        keywords=Keyword.objects.filter(young=users)
+
     except:
         users = PrincipalInvestigator.objects.get(user_id__exact=request.user.id)
         is_young=False
         is_principal=True
-    print request.user
+        keywords=Keyword.objects.filter(principal=users)
+    
+
+    if request.method=='POST':
+        keywords_form = KeywordsForm(request.POST)
+        if (keywords_form.is_valid()):
+            if(is_young):
+                Keyword.objects.create(young=users,word=keywords_form.cleaned_data['word'])
+
+            elif(is_principal):
+                Keyword.objects.create(principal=users,word=keywords_form.cleaned_data['word'])
+
+    keywords_form = KeywordsForm()
+
+
     return render_to_response('users/profile.html',
-                              {'users':users,'is_young':is_young,'is_principal':is_principal},
+                              {'users':users,'is_young':is_young,'is_principal':is_principal,
+                               'keywords_form':keywords_form,'keywords':keywords},
                               context_instance = RequestContext(request))
     
+@login_required
+def remove_keyword_from_profile(request, is_young, users_id, word_word):
+    if (is_young=='1'):
+        young=YoungInvestigator.objects.get(id=users_id)
+        Keyword.objects.filter(young=young,word=word_word).delete()
+    else:
+        principal=PrincipalInvestigator.objects.get(id=users_id)
+        Keyword.objects.get(principal=principal,word=word_word).delete()
+    
+    #redireccion to view_profile
+    return view_profile(request)
+
+@login_required
 def view_profile_withId(request, userId):
     try:
         users = YoungInvestigator.objects.get(user_id__exact=userId)
@@ -40,11 +71,65 @@ def view_profile_withId(request, userId):
         users = PrincipalInvestigator.objects.get(user_id__exact=userId)
         is_young=False
         is_principal=True
-    print request.user
     return render_to_response('users/profile_id.html',
                               {'users':users,'is_young':is_young,'is_principal':is_principal},
                               context_instance = RequestContext(request))
 
+@login_required
+def dashboard(request):
+    adds_list=get_adds(request.user.id)
+    return render_to_response('users/dashboard.html',{'adds_list':adds_list,},context_instance = RequestContext(request))
+
+#used to give 5 random offers for young investigators by their keywords
+def get_adds(userId):
+    try:
+        young=YoungInvestigator.objects.get(user_id=userId)
+    except:
+        return []
+    keywords=Keyword.objects.filter(young_id=young.id)
+    lon=len(keywords)-1
+    
+    if lon>=0:
+        ran1=randint(0,lon)
+        ran2=randint(0,lon)
+        ran3=randint(0,lon)
+        ran4=randint(0,lon)
+        ran5=randint(0,lon)
+
+        w1=keywords[ran1].word
+        w2=keywords[ran2].word
+        w3=keywords[ran3].word
+        w4=keywords[ran4].word
+        w5=keywords[ran5].word
+        
+        add1=Keyword.objects.filter(word=w1).first()
+        add2=Keyword.objects.filter(word=w2).first()
+        add3=Keyword.objects.filter(word=w3).first()
+        add4=Keyword.objects.filter(word=w4).first()
+        add5=Keyword.objects.filter(word=w5).first()
+        
+        id1=add1.offer
+        id2=add2.offer
+        id3=add3.offer
+        id4=add4.offer
+        id5=add5.offer
+        adds=[]
+        
+        if id1!=None:
+            adds.append(id1)
+        if id2!=None:
+            adds.append(id2)
+        if id3!=None:
+            adds.append(id3)
+        if id4!=None:
+            adds.append(id4)
+        if id5!=None:
+            adds.append(id5)
+        
+
+    else:
+        adds=[]
+    return adds
 
 def registration_young_inv(request):
     if request.method=='POST':
@@ -276,7 +361,7 @@ def list_investigation_groups(request):
                                'groups_list':groups_list,
                                'has_groups':has_groups,'has_manage_groups':has_manage_groups},
                               context_instance = RequestContext(request))
-    
+@login_required    
 def group_create(request):
     if request.method=='POST':
         formulario = InvestigationGroupForm(request.POST,request.FILES)
@@ -303,7 +388,7 @@ def group_create(request):
     return render_to_response('groups/create.html',
                               {'formulario':formulario},
                               context_instance = RequestContext(request))
-    
+@login_required
 def group_view(request, groupId):
     group=Investigation_Group.objects.filter(id=groupId)[0]
     manager1=PrincipalInvestigator.objects.filter(id=group.manager.id)[0]
@@ -319,7 +404,7 @@ def group_view(request, groupId):
                               context_instance = RequestContext(request))    
 
 
-
+@login_required
 def add_participant(request, groupId, participantId):
     group=Investigation_Group.objects.filter(id=groupId)
     participant=PrincipalInvestigator.objects.filter(id=participantId)
@@ -329,15 +414,16 @@ def add_participant(request, groupId, participantId):
                               {'group':group},
                               context_instance = RequestContext(request))  
     
-    
+@login_required    
 def add_offer(request):
     principal = PrincipalInvestigator.objects.filter(user_id=request.user.id)
-    if len(principal!=0):
+    if len(principal)!=0:
         prin=principal[0]
     
     if request.method=='POST':
         formulario = OfferForm(request.POST)
-        if formulario.is_valid():
+        keywords=KeywordsForm(request.POST)
+        if formulario.is_valid() and keywords.is_valid():
               
             ##Creacion de la oferta
 #                title=models.CharField(max_length=140)
@@ -356,7 +442,8 @@ def add_offer(request):
                               )
             
             #Keywords
-            keywords=formulario.cleaned_data['keywords']
+            key_for_offer=""
+            keywords=keywords.cleaned_data['word']
             if keywords!=None: 
             #la separamos por comas y eliminamos la ultima tupla si estaa vacia
                 key_vector=keywords.split(",")
@@ -365,24 +452,29 @@ def add_offer(request):
                 
                 if len(key_vector)!=0:
                     #linkeamos todas las keys con su oferta y le hacemos strip para quitarle espacios en blanco a izq y der
-                    for keyword in keywords:
+                    for keyword in key_vector:
                         key = keyword.strip()
                         if key!='' or key!=None:
                             Keyword.objects.create(word=key.capitalize(),offer=offer_inst)
+                            key_for_offer+=key.capitalize()+","
                     #capitalize() strip(' '), .split(", ")
+            offer_inst.keywords=key_for_offer[:len(key_for_offer)-1]
+            offer_inst.save()
             
             ###por aqui
             return HttpResponseRedirect('list')
             
     else:
         formulario = OfferForm()
+        keywords=KeywordsForm(request.POST)
+
     
     return render_to_response('offer/create.html',
-                              {'formulario':formulario},
+                              {'formulario':formulario,'keywords':keywords},
                               context_instance = RequestContext(request))
         
     
-    
+@login_required
 def remove_offer(request,offerId):
     principal = PrincipalInvestigator.objects.filter(user_id=request.user.id)
     if len(principal!=0):
@@ -391,10 +483,11 @@ def remove_offer(request,offerId):
     
     return HttpResponseRedirect('list')
 
+@login_required
 def list_my_offers(request):
     principal = PrincipalInvestigator.objects.filter(user_id=request.user.id)
     offers=[]
-    if len(principal!=0):
+    if len(principal)!=0:
         prin=principal[0]
         offers=Offer.objects.filter(principal=prin)
         
@@ -402,6 +495,7 @@ def list_my_offers(request):
                               {'offers':offers},
                               context_instance = RequestContext(request))
 
+@login_required
 def list_offers_by_keywords(request):    
     young_v = YoungInvestigator.objects.filter(user_id=request.user.id)
     offers=[]
@@ -426,7 +520,7 @@ def list_offers_by_keywords(request):
                                     context_instance = RequestContext(request))    
     return HttpResponseRedirect('')
 
-
+@login_required
 def list_offers_by_one_keyword(request, keyword):    
     key=Keyword.objects.filter(word=keyword)[0]
     offers=Offer.objects.filter(Q(keywords__word=key.word))
@@ -434,6 +528,15 @@ def list_offers_by_one_keyword(request, keyword):
                                     {'offers':offers,'keyword':keyword},
                                     context_instance = RequestContext(request))    
 
+    
+@login_required
+def view_offer(request,offer_id):
+    offer=Offer.objects.get(id=offer_id)    
+    users=PrincipalInvestigator.objects.get(id=offer.principal.id)
+    
+    return render_to_response('offer/view.html',
+                                    {'offer':offer,'users':users},
+                                    context_instance = RequestContext(request))
     
 ##Para ordenar por h_index listas 
 def compara( x, y ) :

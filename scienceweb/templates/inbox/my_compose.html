@@ -5,21 +5,20 @@
 
 
 
-{% block content %}
-<div class="container-fluid">
-  <div class="row">
-	<div class='col-md-2'>
-		<ul>
-		<br><br>
-		<li><a href="/users/messages/inbox">Bandeja de entrada</a></li>
-		<li><a href="/users/messages/outbox">Bandeja de salida</a></li>
-		<li><a href="/users/messages/trash">Eliminados</a></li>
-		<li><a href="/users/messages/compose">Crear Mensaje</a></li>
-		</ul>
+{% block adds %}
+	<div>
+		<a href="/users/messages/inbox">Bandeja de entrada</a><br>
+		<a href="/users/messages/outbox">Bandeja de salida</a><br>
+		<a href="/users/messages/trash">Eliminados</a><br>
+		<a href="/users/messages/compose">Crear Mensaje</a><br>
 		
 	</div>
+{% endblock %}
+
 	
-	<div class="col-md-8">
+{% block content %}
+<div>
+
 		<h3>{% trans "Compose Message"%}</h3>
 
 <form action="" method="post">
@@ -28,6 +27,5 @@
 {{ form.as_table }}
 </table>
 <input type="submit" value="{% trans "Send" %} &raquo;"/>
-</form>
-</div></div></div>
+</form></div>
 {% endblock %}

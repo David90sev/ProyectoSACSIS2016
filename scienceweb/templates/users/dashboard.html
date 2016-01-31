@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+
+{% block title %}
+Welcome to Science
+{% endblock %}
+
+
+{% block content %}
+Bienvenido {{user.username|capfirst}}
+{% endblock %}
+
+
+{% block header-navigation %}
+{% endblock %}
+
+
+{% block header-profile %}
+{% endblock %}
+
+{% block adds %}
+<div><h1>Offers</h1></div>
+	{% for offer in adds_list %}
+		<a href="{% url "view_offer" offer.id %}">
+				<div class="panel">
+					<blockquote>
+						<p>{{offer.title}}</p>
+						<footer>{{offer.description}}</footer>
+					</blockquote>
+					
+			</div>
+		</a>
+	{% endfor %}
+
+{% endblock %}
+

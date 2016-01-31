@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+
+{% block title %}
+	Mis Grupos
+{% endblock %}
+
+
+{% block page-title %}
+	Mis Grupos
+{% endblock %}
+
+
+{% block content %}
+	{% for offer in offers %}
+				<form>
+				<div class="panel">
+					<div class="form-group ">
+				
+						<blockquote>
+							<p>{{offer.title}}</p>
+							<footer>{{offer.description}}</footer>
+						</blockquote>
+						
+						
+						{{offer.keywords}}<br>
+						
+						
+						{{offer.publication_date}} - {{offer.deadline}}
+					</div>
+					<div><a href="/users/offers/remove/{{offer.id}}"/>
+				        		<span class="glyphicon glyphicon-remove-sign" aria-hidden="true"/>
+				        		</a></div>
+				</div>
+			</form>
+	{% endfor %}
+
+
+
+	
+{% endblock %}
+
+<!-- {% block javascript-form %}
+	<script>
+		$(function(){ // DOM ready
+	
+	  // ::: TAGS BOX
+	
+	  $("#tags input").on({
+	    focusout : function() {
+	      var txt = this.value.split(','); // allowed characters
+	    },
+	    keyup : function(ev) {
+	      // if: comma|enter (delimit more keyCodes with | pipe)
+	      if(/(188|13)/.test(ev.which)) $(this).focusout(); 
+	    }
+	  });
+	  $('#tags').on('click', 'span', function() {
+	    if(confirm("Remove "+ $(this).text() +"?")) $(this).remove(); 
+	  });
+  </script>
+
+});
+ -->
+{% endblock %}

@@ -223,6 +223,7 @@ class Offer(models.Model):
     deadline=models.DateField()
     publication_date=models.DateField()
     principal=models.ForeignKey(PrincipalInvestigator, on_delete=models.CASCADE)
+    keywords=models.TextField(blank=True)
 
     
     class Meta:
@@ -235,9 +236,9 @@ class Offer(models.Model):
 
 class Keyword(models.Model):
     word=models.CharField(max_length=50)
-    young=models.ManyToManyField(YoungInvestigator, related_name="keywords", null=True , blank=True)
-    principal=models.ManyToManyField(PrincipalInvestigator,related_name="keywords", null=True, blank=True)
-    offer=models.ManyToManyField(Offer, related_name="keywords" , null=True, blank=True)
+    young=models.ForeignKey(YoungInvestigator, on_delete=models.CASCADE, null=True , blank=True)
+    principal=models.ForeignKey(PrincipalInvestigator, on_delete=models.CASCADE, null=True, blank=True)
+    offer=models.ForeignKey(Offer, on_delete=models.CASCADE , null=True, blank=True)
     
     class Meta:
         verbose_name = 'keyword'
