@@ -8,32 +8,35 @@
 
 
 {% block page-title %}
-	Mis Grupos
+	Search
 {% endblock %}
 
 
 {% block content %}
-<form action="./search/" method="GET">
-    <label for="q">Buscar: </label>
-    <input type="text" name="q" value="{{ query|escape }}">
-    <input type="submit" value="Buscar">
- </form>
+
  
- {% if query %}
-    <h2>Resultados para "{{ query|escape }}":</h2>
- 
- {% else %}
- 	<h2>Todos los resultados :</h2>
- {% endif %}
+
     {% if results %}
       <ul>
       {% for aux in results %}
-        <li>{{aux.user.first_name|capfirst}}&nbsp;{{aux.user.last_name|capfirst}}&nbsp;&nbsp;
-        <a href="{% url "user_profile_withId" aux.user.id %}">Ver perfil</a></l1>
+      	<div class="row">
+		  <div class="col-sm-6 col-md-4">
+		    <a href="{% url "user_profile_withId" aux.user.id %}">
+		    <div class="thumbnail">
+				<img src='{{ aux.photo.url }}' class="img-circle" height="200e" width="200e"/><br>
+		      <div class="caption">
+		        <h3>{{aux.user.first_name|capfirst}}&nbsp;{{aux.user.last_name|capfirst}}</h3>
+		        <p>Research field: {{aux.research_field}}</p>
+		        <p>Specialty: {{aux.research_specialty}}</p>
+		      </div>
+		    </div></a>
+		  </div>
+		</div>
+      
       {% endfor %}
       </ul>
     {% else %}
-      <p>No coincide ning&uacote;n usuario</p>
+      <p>No results.</p>
     {% endif %}
   
 
@@ -41,4 +44,15 @@
 	
 {% endblock %}
 
+{% block adds %}
 
+<form action="/users/search" method="POST" enctype="multipart/form-data">{% csrf_token %}
+    
+    {{ formulario.as_p }}
+        <input type="submit" value="Buscar">
+    
+    
+    
+ </form>
+ {% endblock %}
+ 

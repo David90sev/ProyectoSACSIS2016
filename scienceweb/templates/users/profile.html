@@ -8,62 +8,44 @@ Profile
 
 {% block content %}
 
-	{% if is_young %}
-	<div class="container-fluid">
-	<div class="row">
 	
-	<div class='col-md-8'>
-		{{users.user.first_name}}<br>
-		{{users.user.last_name}}<br>
-		{{user.photo}}<br>
-		{{ users.telephone }}<br>
-		{{ users.title}}<br>
-		{{ users.specialty}}<br>
-		<a href='{{users.curriculum.url}}'>Acceder a su curriculum</a><br>
-		{{users.research_field}}<br>
-		{{users.research_specialty}}<br>
-		{{users.h_index}}<br>
-		{{users.country}}<br>
-		{{users.city}}<br>
-		{{users.principal_text}}<br>
-		{{users.other_text}}<br>
-	</div>
-	<div class=" col-md-3">
-	<img src='{{ users.photo.url }}' class="img-circle" height="200e" width="200e"/><br>
-	</div>
-	</div>		
-	</div>
+	<form action="/users/profile" method="post" enctype="multipart/form-data">{% csrf_token %}
+	<fieldset>
+	<legend>{{users.user.first_name}}
+		{{users.user.last_name}}</legend></fieldset>
+	{{users_form.as_p}}
+
 	
-	{% endif %}
+			<div class="actions">
+				<input type="submit" value="Update">
+			</div>
+	</form>
+
+
 	{% if is_principal %}
-		<div class="container-fluid">
-	<div class="row">
-	
-	<div class='col-md-8'>
-		{{user.first_name}}<br>
-		{{user.last_name}}<br>
-		{{user.photo}}<br>
-		{{ users.telephone }}<br>
-		{{users.research_field}}<br>
-		{{users.research_specialty}}<br>
-		{{users.h_index}}<br>
-		{{users.country}}<br>
-		{{users.city}}<br>
-		{{users.principal_text}}<br>
-		{{users.other_text}}<br>
-		{{users.offers_text}}<br>
-		
-	</div>
-	<div class=" col-md-3">
-	<img src='{{ users.photo.url }}' class="img-circle" height="200e" width="200e"/><br>
-	</div>
-	</div>		
-	</div>
+
+	<div><h1>Offers</h1></div>
+		{% for offer in offers %}
+			<a href="{% url "view_offer" offer.id %}">
+					<div class="panel">
+						<blockquote>
+							<p>{{offer.title}}</p>
+							<footer>{{offer.description}}</footer>
+						</blockquote>
+						
+				</div>
+			</a>
+		{% endfor %}
 	{% endif %}
+
+
 {% endblock %}
 
 {% block adds %}
 <div>
+	<img src='{{ users.photo.url }}' class="img-circle" height="200e" width="200e"/><br>
+	<a href='{{users.curriculum.url}}'>Acceder a su curriculum</a><br>
+
 		<div>
 						<form >
 						<fieldset><legend>Keywords</legend>
@@ -97,7 +79,9 @@ Profile
 		</form>
 		</div>
 </div>
-	
+
+
+
 
 
 {% endblock %}

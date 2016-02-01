@@ -99,6 +99,8 @@ class YoungInvestigatorForm(forms.ModelForm):
                 'facebook_link','twitter_link','linkedIn_link','principal_text','other_text',]
         
 
+        
+
 class PrincipalInvestigatorForm(forms.ModelForm):
 
     class Meta:
@@ -158,3 +160,13 @@ class KeywordsForm(forms.ModelForm):
         model=Keyword
         exclude=('young','principal','offer')
         widgets = {'word':forms.TextInput(attrs={'required': True}),}
+
+
+class SearchForm(forms.Form):
+    CHOICES_33=[('keyword','keyword'),
+         ('research field','research field'),('research speciality','research speciality')]
+    CHOICES_22=[('principal','principal investigator'),
+     ('young','young investigator')]
+    text = forms.CharField(widget=forms.TextInput)
+    filter = forms.ChoiceField(choices=CHOICES_33, widget=forms.RadioSelect())
+    type = forms.ChoiceField(choices=CHOICES_22, widget=forms.RadioSelect())

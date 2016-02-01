@@ -9,58 +9,141 @@ Profile
 {% block content %}
 
 	{% if is_young %}
-	<div class="container-fluid">
-	<div class="row">
 	
-	<div class='col-md-8'>
-		{{users.user.first_name}}<br>
-		{{users.user.last_name}}<br>
-		{{users.user.photo}}<br>
-		{{ users.telephone }}<br>
-		{{ users.title}}<br>
-		{{ users.specialty}}<br>
-		<a href='{{users.curriculum.url}}'>Acceder a su curriculum</a><br>
-		{{users.research_field}}<br>
-		{{users.research_specialty}}<br>
-		{{users.h_index}}<br>
-		{{users.country}}<br>
-		{{users.city}}<br>
-		{{users.principal_text}}<br>
-		{{users.other_text}}<br>
-	</div>
-	<div class=" col-md-3">
-	<img src='{{ users.photo.url }}' class="img-circle" height="200e" width="200e"/><br>
-	</div>
-	</div>		
-	</div>
 	
-	{% endif %}
-	{% if is_principal %}
-		<div class="container-fluid">
-	<div class="row">
 	
-	<div class='col-md-8'>
-		{{user.first_name}}<br>
-		{{user.last_name}}<br>
-		{{user.photo}}<br>
-		{{ users.telephone }}<br>
-		{{users.research_field}}<br>
-		{{users.research_specialty}}<br>
-		{{users.h_index}}<br>
-		{{users.country}}<br>
-		{{users.city}}<br>
-		{{users.principal_text}}<br>
-		{{users.other_text}}<br>
-		{{users.offers_text}}<br>
+	<form>
+	<fieldset>
+	<legend>{{users.user.first_name}}
+		{{users.user.last_name}} - <a>{{users.user.username}}</a></legend></fieldset>
+	</form>
+	<div class="jumbotron">
+		 <div class="container">
+		
+			<p>Title:{{ users.title }}</p>
+			<p>Specialty:{{ users.specialty }}</p>
+		
+			<p>Research: {{users.research_field}}</p>
+			<p>Research specialty: {{users.research_speciality}}</p>
+			<p>h_index: {{users.h_index}}</p>
+			<p>country: {{users.country}}</p>
+			<p>city: {{users.city}}</p>
+			<p>telephone: {{ users.telephone }}</p>
+		</div>
+	</div>
+	<div class="panel panel-primary">
+		<div class="panel-heading">
+		About me: 
+		</div>
+		<div class="panel-footer">
+		{{users.principal_text}}
+		</div>
 		
 	</div>
-	<div class=" col-md-3">
-	<img src='{{ users.photo.url }}' class="img-circle" height="200e" width="200e"/><br>
-	</div>
-	</div>		
-	</div>
-	{% endif %}
+	<div class="panel panel-primary">
+		<div class="panel-heading">
+			Others: 
+		</div>
+		<div class="panel-footer">
+			{{users.other_text}}
+		</div>
+	</div>	
+	
+	
 
+	{% endif %}
+	{% if is_principal %}
+	<form>
+	<fieldset>
+	<legend>{{users.user.first_name}}
+		{{users.user.last_name}}</legend></fieldset>
+	</form>
+	<div class="jumbotron">
+		 <div class="container">		
+			<p>Research: {{users.research_field}}</p>
+			<p>Research specialty: {{users.research_speciality}}</p>
+			<p>h_index: {{users.h_index}}</p>
+			<p>country: {{users.country}}</p>
+			<p>city: {{users.city}}</p>
+			<p>telephone: {{ users.telephone }}</p>
+		</div>
+	</div>
+	<div class="panel panel-primary">
+		<div class="panel-heading">
+		About me: 
+		</div>
+		<div class="panel-footer">
+		{{users.principal_text}}
+		</div>
+		
+	</div>
+	<div class="panel panel-primary">
+		<div class="panel-heading">
+			Others: 
+		</div>
+		<div class="panel-footer">
+			{{users.other_text}}
+		</div>
+	</div>	
+	
+	
+		
+	{% endif %}
+{% endblock %}
+
+{% block adds %}
+<div>
+	<img src='{{ users.photo.url }}' class="img-circle" height="200e" width="200e"/><br><br>
+	<div class="col-md-offset-3">
+		<a href="{{users.facebook_link}}"><img src='/media/icons/facebook.png'  class="img" height="30e" width="30e"/></a>
+		<a href="{{users.linkedIn_link}}"><img src='/media/icons/linkedin.png'  class="img" height="30e" width="30e"/></a>
+		<a href="{{users.twitter_link}}"><img src='/media/icons/twitter.png' class="img" height="30e" width="30e"/></a>
+
+	</div><br>
+	<a href='{{users.curriculum.url}}'>Acceder a su curriculum</a><br>
+
+		<div>
+						<form >
+						<fieldset><legend>Keywords</legend>
+				        {% for word in keywords %}
+				        	<div class=' btn btn-warning btn-xs'>
+				        		{{word.word}}
+				        	</div>
+				        
+				        {% endfor %}
+				        </fieldset>
+				        </form>
+		</div>		
+		<br>
+		<div>
+		<form >
+		
+			{{keywords_form.as_table}}
+			
+		</form>
+		</div>
+</div>
+
+
+<!-- <div><button type="button" class="btn btn-principal" href=""/)></div>
+ -->
+
+
+	{% if is_principal %}
+
+	<div><h1>Offers</h1></div>
+		{% for offer in offers %}
+			<a href="{% url "view_offer" offer.id %}">
+					<div class="panel">
+						<blockquote>
+							<p>{{offer.title}}</p>
+							<footer>{{offer.description}}</footer>
+						</blockquote>
+						
+				</div>
+			</a>
+		{% endfor %}
+	{% endif %}
 
 
 

@@ -1,11 +1,10 @@
-from django.shortcuts import render, render_to_response
-from django.views.generic.base import TemplateView
+from django.shortcuts import  render_to_response
 from users.models import YoungInvestigator, PrincipalInvestigator,Keyword,\
     Investigation_Group, Invitation, Offer, Keyword
 from django.contrib.auth.decorators import login_required
 from django.template.context import RequestContext
 from users.forms import YoungInvestigatorForm, PrincipalInvestigatorForm,\
-    UserForm, InvestigationGroupForm, OfferForm, KeywordsForm
+    UserForm, InvestigationGroupForm, OfferForm, KeywordsForm,SearchForm
 from django.template.loader import render_to_string
 from django.core.mail.message import EmailMultiAlternatives, EmailMessage
 from django.template.defaultfilters import striptags
@@ -15,6 +14,8 @@ from django.http.response import HttpResponseRedirect
 from django.db.models import Q
 from datetime import datetime, timedelta
 from random import randint
+from django.views.generic.edit import UpdateView
+
 
 # Create your views here.
 @login_required
@@ -24,29 +25,81 @@ def view_profile(request):
         is_young=True
         is_principal=False
         keywords=Keyword.objects.filter(young=users)
+        offers=[]
 
     except:
         users = PrincipalInvestigator.objects.get(user_id__exact=request.user.id)
         is_young=False
         is_principal=True
         keywords=Keyword.objects.filter(principal=users)
+        a=datetime.now()
+        offers=Offer.objects.filter(principal=users, deadline__gt=a)
     
 
     if request.method=='POST':
+        if(is_young):
+            users_form=YoungInvestigatorForm(request.POST)
+        else:
+            users_form=PrincipalInvestigatorForm(request.POST)
         keywords_form = KeywordsForm(request.POST)
         if (keywords_form.is_valid()):
             if(is_young):
                 Keyword.objects.create(young=users,word=keywords_form.cleaned_data['word'])
-
+                
             elif(is_principal):
                 Keyword.objects.create(principal=users,word=keywords_form.cleaned_data['word'])
+                
+                
+        if  users_form.is_valid():
+                
+            if is_young:
+            #                 'telephone','title','specialty','research_field','research_speciality','h_index','country','city',
+#                 'facebook_link','twitter_link','linkedIn_link','principal_text','other_text'                
+                users.telephone=users_form.cleaned_data['telephone']
+                users.title=users_form.cleaned_data['title']
+                users.specialty=users_form.cleaned_data['specialty']
+                users.research_field=users_form.cleaned_data['research_field']
+                users.research_speciality=users_form.cleaned_data['research_speciality']
+                users.h_index=users_form.cleaned_data['h_index']
+                users.country=users_form.cleaned_data['country']
+                users.city=users_form.cleaned_data['city']
+                users.facebook_link=users_form.cleaned_data['facebook_link']
+                users.twitter_link=users_form.cleaned_data['twitter_link']
+                users.linkedIn_link=users_form.cleaned_data['linkedIn_link']
+                users.principal_text=users_form.cleaned_data['principal_text']
+                users.other_text=users_form.cleaned_data['other_text']
+                users.save()
+            elif(is_principal):
+#                 'telephone','research_field','research_speciality','h_index','country','city','facebook_link',
+#                   'twitter_link','linkedIn_link','principal_text','other_text','number_of_authorisating'
+#                   ,'interested_in_premium'
+                users.telephone=users_form.cleaned_data['telephone']
+                users.research_field=users_form.cleaned_data['research_field']
+                users.research_speciality=users_form.cleaned_data['research_speciality']
+                users.h_index=users_form.cleaned_data['h_index']
+                users.country=users_form.cleaned_data['country']
+                users.city=users_form.cleaned_data['city']
+                users.facebook_link=users_form.cleaned_data['facebook_link']
+                users.twitter_link=users_form.cleaned_data['twitter_link']
+                users.linkedIn_link=users_form.cleaned_data['linkedIn_link']
+                users.principal_text=users_form.cleaned_data['principal_text']
+                users.other_text=users_form.cleaned_data['other_text']
+                users.number_of_authorisating=users_form.cleaned_data['number_of_authorisating']
+                users.interested_in_premium=users_form.cleaned_data['interested_in_premium']
+                users.save()
+            
+                
 
     keywords_form = KeywordsForm()
-
-
+    if(is_young):
+        users_form=YoungInvestigatorForm(instance=users)
+    else:
+        users_form=PrincipalInvestigatorForm(instance=users)
+        
     return render_to_response('users/profile.html',
                               {'users':users,'is_young':is_young,'is_principal':is_principal,
-                               'keywords_form':keywords_form,'keywords':keywords},
+                               'keywords_form':keywords_form,'keywords':keywords,'users_form':users_form,
+                               'offers':offers,},
                               context_instance = RequestContext(request))
     
 @login_required
@@ -56,10 +109,11 @@ def remove_keyword_from_profile(request, is_young, users_id, word_word):
         Keyword.objects.filter(young=young,word=word_word).delete()
     else:
         principal=PrincipalInvestigator.objects.get(id=users_id)
-        Keyword.objects.get(principal=principal,word=word_word).delete()
+        Keyword.objects.filter(principal=principal,word=word_word).delete()
     
     #redireccion to view_profile
     return view_profile(request)
+
 
 @login_required
 def view_profile_withId(request, userId):
@@ -67,12 +121,20 @@ def view_profile_withId(request, userId):
         users = YoungInvestigator.objects.get(user_id__exact=userId)
         is_young=True
         is_principal=False
+        offers=[]
+        keywords=Keyword.objects.filter(young=users)
+
     except:
         users = PrincipalInvestigator.objects.get(user_id__exact=userId)
         is_young=False
         is_principal=True
+        a=datetime.now()
+        offers=Offer.objects.filter(principal=users, deadline__gt=a)
+        keywords=Keyword.objects.filter(principal=users)
+
+        
     return render_to_response('users/profile_id.html',
-                              {'users':users,'is_young':is_young,'is_principal':is_principal},
+                              {'users':users,'is_young':is_young,'is_principal':is_principal,'offers':offers,'keywords':keywords,},
                               context_instance = RequestContext(request))
 
 @login_required
@@ -90,11 +152,14 @@ def get_adds(userId):
     lon=len(keywords)-1
     
     if lon>=0:
+        print lon
         ran1=randint(0,lon)
         ran2=randint(0,lon)
         ran3=randint(0,lon)
         ran4=randint(0,lon)
         ran5=randint(0,lon)
+
+        print ran1, ran2,ran2,ran3,ran4,ran5
 
         w1=keywords[ran1].word
         w2=keywords[ran2].word
@@ -102,11 +167,15 @@ def get_adds(userId):
         w4=keywords[ran4].word
         w5=keywords[ran5].word
         
+        print w1, w2,w3,w4,w5
+        
         add1=Keyword.objects.filter(word=w1).first()
         add2=Keyword.objects.filter(word=w2).first()
         add3=Keyword.objects.filter(word=w3).first()
         add4=Keyword.objects.filter(word=w4).first()
         add5=Keyword.objects.filter(word=w5).first()
+        
+        print add1,add2
         
         id1=add1.offer
         id2=add2.offer
@@ -114,6 +183,8 @@ def get_adds(userId):
         id4=add4.offer
         id5=add5.offer
         adds=[]
+        
+        print id1, id2
         
         if id1!=None:
             adds.append(id1)
@@ -553,41 +624,39 @@ def compara( x, y ) :
     return rst
 
 def search_user(request):
-    query = request.GET.get('q', '')
     a=datetime.now() - timedelta(seconds=(365.25*24*60*60))
-    if query:
-        qset = (
-            Q(username__icontains=query) |
-            Q(first_name__icontains=query) |
-            Q(last_name__icontains=query)|
-            Q(last_login__gt=a)
-        )
-        results = User.objects.filter(qset).distinct()
-        investigadores=[]
-        for r in results:
-            try:
-                investigadores += YoungInvestigator.objects.filter(user_id=r.id)
-            except:
-                None
-            try:
-                investigadores += PrincipalInvestigator.objects.filter(user_id=r.id)
-            except:
-                None
-        investigadores.sort(compara)
+    investigadores=[]
+
+    if request.method=='POST':
+        formulario = SearchForm(request.POST)
+        if formulario.is_valid():
+            text=formulario.cleaned_data["text"]
+            filter=formulario.cleaned_data["filter"]
+            if (filter=="keyword"):
+                qset = (
+                    Q(keyword__word=text)&
+                    Q(user__last_login__gt=a)
+                )
+            elif (filter=="research field"):
+                qset = (
+                    Q(research_field=text)&
+                    Q(user__last_login__gt=a)
+                )
+            elif (filter=="research speciality"):
+                qset = (
+                    Q(research_speciality=text)&
+                    Q(user__last_login__gt=a)
+                )
+
+            if formulario.cleaned_data["type"]=="principal":
+                investigadores = PrincipalInvestigator.objects.filter(qset).distinct()
+            else:
+                investigadores = YoungInvestigator.objects.filter(qset).distinct()
+            
     else:
-        results = User.objects.filter(is_staff=0)
-        investigadores=[]
-        for r in results:
-            try:
-                investigadores += YoungInvestigator.objects.filter(user_id=r.id)
-            except:
-                None
-            try:
-                investigadores += PrincipalInvestigator.objects.filter(user_id=r.id)
-            except:
-                None
-        investigadores.sort(compara)
+        formulario=SearchForm()
+
     return render_to_response("users/list.html", {
         "results": investigadores,
-        "query": query
+        "formulario": formulario
     },context_instance = RequestContext(request))
