@@ -20,12 +20,12 @@ New offer
 			</table>
 			<p><h3>Keywords</h3></p>
     		<table>
-    			{{ keywords.as_table }}	
+    			{{ keywords.as_p }}	
 			</table>
 			<br>
 			<div class="actions">
-				<input type="submit" value="Save">
-				<input type="button" value="Back" onclick="window.location.replace('{% url "self_profile" %}')">
+				<input type="submit" class="btn btn-default" value="Save">
+				<input type="button" class="btn btn-default" value="Back" onclick="window.location.replace('{% url "list_offers" %}')">
 			</div>
 		</form>
 	</div>

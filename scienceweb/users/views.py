@@ -17,20 +17,35 @@ from random import randint
 from django.views.generic.edit import UpdateView
 
 
+def is_young_check(request):
+    try:
+        YoungInvestigator.objects.get(user_id=request.user.id)
+        is_young=True
+    except:
+        is_young=False
+    return is_young
+
+def is_principal_check(request):
+    try:
+        PrincipalInvestigator.objects.get(user_id=request.user.id)
+        is_principal=True
+    except:
+        is_principal=False
+    return is_principal
+
 # Create your views here.
 @login_required
 def view_profile(request):
+    is_young=is_young_check(request)
+    is_principal=is_principal_check(request)
+    
     try:
         users = YoungInvestigator.objects.get(user_id__exact=request.user.id)
-        is_young=True
-        is_principal=False
         keywords=Keyword.objects.filter(young=users)
         offers=[]
 
     except:
         users = PrincipalInvestigator.objects.get(user_id__exact=request.user.id)
-        is_young=False
-        is_principal=True
         keywords=Keyword.objects.filter(principal=users)
         a=datetime.now()
         offers=Offer.objects.filter(principal=users, deadline__gt=a)
@@ -117,17 +132,16 @@ def remove_keyword_from_profile(request, is_young, users_id, word_word):
 
 @login_required
 def view_profile_withId(request, userId):
+    is_young=is_young_check(request)
+    is_principal=is_principal_check(request)
+    
     try:
         users = YoungInvestigator.objects.get(user_id__exact=userId)
-        is_young=True
-        is_principal=False
         offers=[]
         keywords=Keyword.objects.filter(young=users)
 
     except:
         users = PrincipalInvestigator.objects.get(user_id__exact=userId)
-        is_young=False
-        is_principal=True
         a=datetime.now()
         offers=Offer.objects.filter(principal=users, deadline__gt=a)
         keywords=Keyword.objects.filter(principal=users)
@@ -140,7 +154,10 @@ def view_profile_withId(request, userId):
 @login_required
 def dashboard(request):
     adds_list=get_adds(request.user.id)
-    return render_to_response('users/dashboard.html',{'adds_list':adds_list,},context_instance = RequestContext(request))
+    is_young=is_young_check(request)
+    is_principal=is_principal_check(request)
+    
+    return render_to_response('users/dashboard.html',{'adds_list':adds_list,'is_principal':is_principal,'is_young':is_young,},context_instance = RequestContext(request))
 
 #used to give 5 random offers for young investigators by their keywords
 def get_adds(userId):
@@ -413,6 +430,9 @@ def activate(request, token):
     
 @login_required
 def list_investigation_groups(request):
+    is_young=is_young_check(request)
+    is_principal=is_principal_check(request)
+    
     principal = PrincipalInvestigator.objects.filter(user_id=request.user.id)
     if len(principal)==1:
         man=principal[0]
@@ -430,10 +450,13 @@ def list_investigation_groups(request):
     return render_to_response('groups/list.html',
                               {'groups_list_as_manager':groups_list_as_manager,
                                'groups_list':groups_list,
-                               'has_groups':has_groups,'has_manage_groups':has_manage_groups},
+                               'has_groups':has_groups,'has_manage_groups':has_manage_groups,
+                               'is_young':is_young,'is_principal':is_principal,},
                               context_instance = RequestContext(request))
 @login_required    
 def group_create(request):
+    is_young=is_young_check(request)
+    is_principal=is_principal_check(request)
     if request.method=='POST':
         formulario = InvestigationGroupForm(request.POST,request.FILES)
         if formulario.is_valid():
@@ -457,10 +480,13 @@ def group_create(request):
         formulario = InvestigationGroupForm()
     
     return render_to_response('groups/create.html',
-                              {'formulario':formulario},
+                              {'formulario':formulario, 'is_young':is_young,'is_principal':is_principal,},
                               context_instance = RequestContext(request))
 @login_required
 def group_view(request, groupId):
+    is_young=is_young_check(request)
+    is_principal=is_principal_check(request)
+    
     group=Investigation_Group.objects.filter(id=groupId)[0]
     manager1=PrincipalInvestigator.objects.filter(id=group.manager.id)[0]
     user_manager=User.objects.filter(id=manager1.user.id)[0]
@@ -471,22 +497,29 @@ def group_view(request, groupId):
     
     
     return render_to_response('groups/view.html',
-                              {'group':group,'manager':manager1,'user_manager':user_manager,'users':users},
+                              {'group':group,'manager':manager1,'user_manager':user_manager,'users':users,
+                               'is_young':is_young,'is_principal':is_principal,},
                               context_instance = RequestContext(request))    
 
 
 @login_required
 def add_participant(request, groupId, participantId):
+    is_young=is_young_check(request)
+    is_principal=is_principal_check(request)
     group=Investigation_Group.objects.filter(id=groupId)
     participant=PrincipalInvestigator.objects.filter(id=participantId)
     Invitation.objects.create(group=group,participant=participant)
     
     return render_to_response('groups/view.html',
-                              {'group':group},
+                              {'group':group,
+                               'is_young':is_young,'is_principal':is_principal,},
                               context_instance = RequestContext(request))  
     
 @login_required    
 def add_offer(request):
+    is_young=is_young_check(request)
+    is_principal=is_principal_check(request)
+    
     principal = PrincipalInvestigator.objects.filter(user_id=request.user.id)
     if len(principal)!=0:
         prin=principal[0]
@@ -541,7 +574,8 @@ def add_offer(request):
 
     
     return render_to_response('offer/create.html',
-                              {'formulario':formulario,'keywords':keywords},
+                              {'formulario':formulario,'keywords':keywords,
+                               'is_young':is_young,'is_principal':is_principal,},
                               context_instance = RequestContext(request))
         
     
@@ -556,6 +590,8 @@ def remove_offer(request,offerId):
 
 @login_required
 def list_my_offers(request):
+    is_young=is_young_check(request)
+    is_principal=is_principal_check(request)
     principal = PrincipalInvestigator.objects.filter(user_id=request.user.id)
     offers=[]
     if len(principal)!=0:
@@ -563,11 +599,14 @@ def list_my_offers(request):
         offers=Offer.objects.filter(principal=prin)
         
     return render_to_response('offer/list.html',
-                              {'offers':offers},
+                              {'offers':offers,
+                               'is_young':is_young,'is_principal':is_principal,},
                               context_instance = RequestContext(request))
 
 @login_required
-def list_offers_by_keywords(request):    
+def list_offers_by_keywords(request):
+    is_young=is_young_check(request)
+    is_principal=is_principal_check(request) 
     young_v = YoungInvestigator.objects.filter(user_id=request.user.id)
     offers=[]
     if len(young_v)!=0:
@@ -587,26 +626,33 @@ def list_offers_by_keywords(request):
 
 # para una sola keyword Offer.objects.filter(Q(keywords__word=key.word))
         return render_to_response('offer/list.html',
-                                    {'offers':offers},
+                                    {'offers':offers,
+                                     'is_young':is_young,'is_principal':is_principal},
                                     context_instance = RequestContext(request))    
     return HttpResponseRedirect('')
 
 @login_required
-def list_offers_by_one_keyword(request, keyword):    
+def list_offers_by_one_keyword(request, keyword): 
+    is_young=is_young_check(request)
+    is_principal=is_principal_check(request)   
     key=Keyword.objects.filter(word=keyword)[0]
     offers=Offer.objects.filter(Q(keywords__word=key.word))
     return render_to_response('offer/list.html',
-                                    {'offers':offers,'keyword':keyword},
+                                    {'offers':offers,'keyword':keyword,
+                                     'is_young':is_young,'is_principal':is_principal,},
                                     context_instance = RequestContext(request))    
 
     
 @login_required
 def view_offer(request,offer_id):
+    is_young=is_young_check(request)
+    is_principal=is_principal_check(request)
     offer=Offer.objects.get(id=offer_id)    
     users=PrincipalInvestigator.objects.get(id=offer.principal.id)
     
     return render_to_response('offer/view.html',
-                                    {'offer':offer,'users':users},
+                                    {'offer':offer,'users':users,
+                                     'is_principal':is_principal,'is_young':is_young,},
                                     context_instance = RequestContext(request))
     
 ##Para ordenar por h_index listas 
@@ -624,6 +670,8 @@ def compara( x, y ) :
     return rst
 
 def search_user(request):
+    is_young=is_young_check(request)
+    is_principal=is_principal_check(request)
     a=datetime.now() - timedelta(seconds=(365.25*24*60*60))
     investigadores=[]
 
@@ -658,5 +706,6 @@ def search_user(request):
 
     return render_to_response("users/list.html", {
         "results": investigadores,
-        "formulario": formulario
+        "formulario": formulario,
+        'is_principal':is_principal,'is_young':is_young,
     },context_instance = RequestContext(request))

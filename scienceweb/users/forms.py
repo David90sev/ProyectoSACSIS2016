@@ -146,13 +146,12 @@ class OfferForm(forms.ModelForm):
     class Meta:
         model = Offer
         #fields = []
-        exclude= ('principal','publication_date',)
-        widgets = {}
-        title=forms.TextInput(attrs={'required': True})
-        description=forms.Textarea(attrs={'required': True})
-        deadline=forms.DateField()
+        exclude= ('principal','publication_date','keywords')
+        widgets = {'title':forms.TextInput(attrs={'required': True}),
+                   'description':forms.Textarea(attrs={'required': True}),
+                    'deadline':forms.DateInput(format='%d/%m/%Y'),}
 #         keywords = forms.TextInput(attrs={'required': True})
-        fields =['title','description','deadline']
+#         fields =['title','description','deadline']
 
 class KeywordsForm(forms.ModelForm):
     

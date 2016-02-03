@@ -23,8 +23,8 @@ urlpatterns += patterns('',
     url(r'^addparticipant/(?P<groupId>\d*)$',views.add_participant, name="group_add_participant"),
     url(r'^keyremove/young/(?P<users_id>\d*)/(?P<word_word>.*)', views.remove_keyword_from_profile, {'is_young':'1',},name="keyremove"),
     url(r'^keyremove/principal/(?P<users_id>\d*)/(?P<word_word>.*)', views.remove_keyword_from_profile, {'is_young':'0',},name="keyremove"),
-    url(r'offers/add',views.add_offer),
-    url(r'offers/list',views.list_my_offers),
+    url(r'offers/add',views.add_offer, name='add_offers'),
+    url(r'offers/list',views.list_my_offers, name="list_offers"),
     url(r'^offers/view/(?P<offer_id>.*)',views.view_offer, name="view_offer"),
                         )
 

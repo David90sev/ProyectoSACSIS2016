@@ -41,8 +41,19 @@
 	
 {% endblock %}
 
-<!-- {% block javascript-form %}
-	<script>
+{% block adds %}
+
+	<div>
+	
+		<button class="btn btn-default" type="button" onclick="window.location.replace('{% url "add_offers" %}')" >Add new Offer</button>
+	</div>
+
+{% endblock %}
+
+
+
+{% block javascript-form %}
+<!-- 	<script>
 		$(function(){ // DOM ready
 	
 	  // ::: TAGS BOX
